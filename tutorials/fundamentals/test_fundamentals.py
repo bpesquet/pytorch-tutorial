@@ -37,26 +37,27 @@ def test_tensor_manipulation():
     # Addition operator
     y1 = x + 2
 
-    # Addition method
+    # Addition method, obtaining (logically) and identical result
     y2 = torch.add(x, 2)
     assert torch.equal(y1, y2)
 
-    # Create a deep copy of a tensor
-    # detach() removes its output from the computational graph (no gradient computation)
-    # https://stackoverflow.com/a/62496418
+    # Create a deep copy of a tensor.
+    # detach() removes its output from the computational graph (no gradient computation).
+    # See below for details about gradients.
+    # See also https://stackoverflow.com/a/62496418
     x1 = x.detach().clone()
 
     # In-place addition: tensor is mutated
     x.add_(2)
     assert torch.equal(x, x1 + 2)
 
-    # Indexing is similar to the Python/NumPy syntax
+    # Indexing is similar to the Python/NumPy syntax.
     # Example: set all values of second column to zero
     x[:, 1] = 0
 
-    # PyTorch allows a tensor to be a view of an existing tensor
-    # View tensors share the same underlying data with their base tensor
-    # Example : reshaping into a 1D tensor (a vector)
+    # PyTorch allows a tensor to be a view of an existing tensor.
+    # View tensors share the same underlying data with their base tensor.
+    # Example : reshaping a 2D tensor into a 1D tensor (a vector)
     x_view = x.view(15)
     assert x_view.shape == torch.Size([15])
 
@@ -66,7 +67,7 @@ def test_tensor_manipulation():
         -1,
     ).shape == torch.Size([15])
 
-    # The reshape() function mimics the NumPy API
+    # The reshape() function mimics the NumPy API.
     # Example: reshaping into a (3,5) tensor, creating a view if possible
     assert x.reshape(3, -1).shape == torch.Size([3, 5])
 
@@ -87,7 +88,7 @@ def test_gpu_support():
     device = get_device()
     print(f"PyTorch {torch.__version__}, using {device} device")
 
-    # Create a 1D tensor (filled with the scalar value 1) on the memory of the found device
+    # Create a 1D tensor (filled with the scalar value 1) on the memory of the initialized device
     _ = torch.ones(5, device=device)
 
     # Create a 2D tensor (filled with zeros) on CPU memory
@@ -108,17 +109,17 @@ def test_autodiff():
 
     # Example 1: basic operations
 
-    # Create tensor with gradient computation activated
+    # Create scalar tensors with gradient computation activated.
     # (By default, operations are not tracked on user-created tensors)
     x = torch.tensor(1.0, requires_grad=True)
     w = torch.tensor(2.0, requires_grad=True)
     b = torch.tensor(3.0, requires_grad=True)
 
-    # Apply basic operations
+    # Apply operations
     y = w * x + b
     assert y.requires_grad is True
 
-    # Compute gradients
+    # Compute gradients of operations leading up to this tennsor
     y.backward()
 
     # Print the gradients
@@ -133,7 +134,7 @@ def test_autodiff():
 
     # Example 2: a slighly more complex computational graph
 
-    # Create two tensors with gradient computation activated
+    # Create two scalar tensors with gradient computation activated
     x1 = torch.tensor([2.0], requires_grad=True)
     x2 = torch.tensor([5.0], requires_grad=True)
 
