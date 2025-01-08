@@ -460,7 +460,8 @@ MODEL_DIR = "./_output"
 # Download and load the pretrained model ResNet-18
 resnet = models.resnet18(weights="ResNet18_Weights.DEFAULT")
 
-# Optional: copy downloaded model to device memory for hardware acceleration
+# Optional: copy downloaded model to device memory for hardware acceleration.
+# Make sure to call input = input.to(device) on any input tensors that you feed to the model
 resnet = resnet.to(device)
 
 # Save model parameters (recommended way of saving models)
@@ -488,5 +489,8 @@ resnet.eval()
 
 ## Additional resources
 
-- [Introduction to PyTorch - YouTube Series](https://pytorch.org/tutorials/beginner/introyt/introyt_index.html)
+- [PyTorch Cheat Sheet](https://pytorch.org/tutorials/beginner/ptcheat.html)
 - [PyTorch: Learn the Basics](https://pytorch.org/tutorials/beginner/basics/intro.html)
+- [Deep Learning with PyTorch: A 60 Minute Blitz](https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html)
+- [Introduction to PyTorch - YouTube Series](https://pytorch.org/tutorials/beginner/introyt/introyt_index.html)
+- [What is torch.nn really?](https://pytorch.org/tutorials/beginner/nn_tutorial.html)

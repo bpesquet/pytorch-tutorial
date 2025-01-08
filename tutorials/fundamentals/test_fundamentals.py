@@ -261,7 +261,8 @@ def test_model_loading_and_saving():
     # Download and load the pretrained model ResNet-18
     resnet = models.resnet18(weights="ResNet18_Weights.DEFAULT")
 
-    # Optional: copy downloaded model to device memory for hardware acceleration
+    # Optional: copy downloaded model to device memory for hardware acceleration.
+    # Make sure to call input = input.to(device) on any input tensors that you feed to the model
     resnet = resnet.to(device)
 
     # Save model parameters (recommended way of saving models)
