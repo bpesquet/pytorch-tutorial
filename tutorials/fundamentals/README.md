@@ -3,23 +3,31 @@ marp: true
 math: true  # Use default Marp engine for math rendering
 ---
 
+<!-- Apply header and footer to first slide only -->
+<!-- _header: "[![Bordeaux INP logo](../../ensc_logo.jpg)](https://www.bordeaux-inp.fr)" -->
+<!-- _footer: "[Baptiste Pesquet](https://www.bpesquet.fr)" -->
 <!-- headingDivider: 3 -->
 
 # PyTorch Fundamentals
 
-In a nutshell, [PyTorch](https://pytorch.org/) can be described as the combination of:
+<!-- Show pagination, starting with second slide -->
+<!-- paginate: true -->
 
-- a tensor manipulation library;
+## PyTorch in a nutshell
+
+[PyTorch](https://pytorch.org/) can be described as the combination of:
+
+- a tensor library;
 - an automatic differentiation engine;
 - an API for defining and training neural networks.
 
-This tutorial focuses on its fundamentals aspects: tensor creation and handling, GPU support, autodifferentiation, data and model loading/saving.
+This tutorial focuses on its fundamentals aspects: tensor manipulation, GPU support, autodifferentiation, data and model loading/saving.
 
 ## Importing PyTorch
 
-First and foremost, we need to import PyTorch.
+First and foremost, we need to import [torch](https://pytorch.org/docs/stable/torch.html), the core package of PyTorch.
 
-> Depending on your context, the library may already be available on your system and ready to be imported. For example, this is the case in most cloud-based notebook execution platforms like [Google Colaboratory](https://colab.research.google.com/). Refer to its [documentation](https://pytorch.org/get-started/locally/) if you need to install it.
+> Depending on your context, the library may already be available on your system and ready to be imported. For example, this is the case in most cloud-based notebook execution platforms like [Google Colaboratory](https://colab.research.google.com/). Refer to its [documentation](https://pytorch.org/get-started/locally/) if you need to install PyTorch on your local environment.
 
 ```python
 import torch
@@ -31,6 +39,8 @@ import torch
 ---
 
 This tutorial uses several additional libraries that you must import using the following code.
+
+> You might need to install the [scikit-learn](https://scikit-learn.org) and [torchvision](https://pytorch.org/vision/stable/index.html) packages beforehand.
 
 ```python
 import math
@@ -51,11 +61,15 @@ Tensors are the core data structures of Machine Learning. A **tensor** is a fanc
 PyTorch tensors are quite similar to [NumPy](https://numpy.org)’s [ndarrays](https://numpy.org/doc/stable/reference/generated/numpy.array.html), except for the following key differences:
 
 - they can run on GPUs or other hardware accelerators;
-- they are optimized for automatic differentiation §see below for details).
+- they are optimized for automatic differentiation (see below for details).
 
 ### Tensor creation
 
 Tensors can be created in various ways. Here are some examples.
+
+Tensors have attributes describing their shape, datatype, and the device on which they are stored (more on thath below).
+
+---
 
 > The [assert](https://docs.python.org/3/reference/simple_stmts.html#grammar-token-python-grammar-assert_stmt) statements are used to check (and also illustrate) the expected results of previous statements.
 
@@ -63,42 +77,58 @@ Tensors can be created in various ways. Here are some examples.
 # Create a 1D tensor with predefined values
 x = torch.tensor([5.5, 3])
 assert x.shape == torch.Size([2])
+assert x.dtype == torch.float32
+assert x.device == torch.device(type="cpu")
 
-# Create a 2D tensor filled with random numbers from a uniform distribution
-x = torch.rand(5, 3)
+# Create a 2D tensor filled with random integers.
+# Values are generated uniformly between the low and high (excluded) bounds
+x = torch.randint(low=0, high=100, size=(5, 3))
 assert x.shape == torch.Size([5, 3])
+assert x.dtype == torch.int64
+assert x.device == torch.device(type="cpu")
 ```
 
 ### Operations on tensors
 
-PyTorch offers a comprehensive, NumPy-like API for applying operations to tensors.
+Many operations can be applied to tensor: transposing, indexing, slicing, mathematical operations, linear algebra, random sampling, and more!
 
 ```python
 # Addition operator
 y1 = x + 2
 
-# Addition method, obtaining (logically) and identical result
+# Addition method, obtaining (logically) an identical result
 y2 = torch.add(x, 2)
 assert torch.equal(y1, y2)
-
-# Create a deep copy of a tensor.
-# detach() removes its output from the computational graph (no gradient computation).
-# See below for details about gradients.
-# See also https://stackoverflow.com/a/62496418
-x1 = x.detach().clone()
-
-# In-place addition: tensor is mutated
-x.add_(2)
-assert torch.equal(x, x1 + 2)
 ```
 
 ---
 
+#### Cloning and in-place operations
+
+By default, operations don't mutate (update) the tensor on which they are applied. This behavior can be changed by using in-place operations, denoted by a `_` suffix.
+
+Obtaining a deep copy of a tensor can be achieved by using the [clone()](https://pytorch.org/docs/stable/generated/torch.clone.html) function.
+
+```python
+# Create a deep copy of a tensor (allocating new memory).
+# detach() removes its output from the computational graph (no gradient computation).
+# See below for details about gradients.
+# See also https://stackoverflow.com/a/62496418
+x_clone = x.detach().clone()
+
+# In-place addition: tensor is mutated
+x.add_(2)
+assert torch.equal(x, x_clone + 2)
+```
+
+---
+
+#### Indexing and slicing
+
 Indexing and slicing tensors work very similar to the Python/NumPy API.
 
 ```python
-# Indexing is similar to the Python/NumPy syntax.
-# Example: set all values of second column to zero
+# NumPy-like indexing and slicing: update all values of second axis
 x[:, 1] = 0
 ```
 
@@ -129,19 +159,30 @@ assert x.reshape(3, -1).shape == torch.Size([3, 5])
 
 Tensors can be created from NumPy arrays, and vice-versa.
 
+> Tensors stored on the CPU memory and NumPy arrays can share their underlying memory locations. Changing one will change the other.
+
+---
+
 ```python
+# Number of values in the next arrays/tensors
+n_values = 5
+
 # Create a PyTorch tensor from a NumPy array
-a = np.random.rand(2, 2)
-b = torch.from_numpy(a)
-assert b.shape == torch.Size([2, 2])
+n = np.ones(n_values)
+t = torch.from_numpy(n)
+assert t.shape == torch.Size([n_values])
+# Updating the array mutates the tensor
+np.add(n, 1, out=n)
+assert torch.equal(t, torch.tensor([2] * n_values))
 
 # Obtain a NumPy array from a PyTorch tensor
-a = torch.rand(2, 2)
-b = a.numpy()
-assert b.shape == (2, 2)
+t = torch.ones(n_values)
+n = t.numpy()
+assert n.shape == (n_values,)
+# Updating the tensor mutates the array
+t.add_(1)
+assert np.array_equal(n, np.array([2] * n_values))
 ```
-
-> Tensors stored on the CPU memory and NumPy arrays can share their underlying memory locations. Changing one will change the other.
 
 ## GPU support
 
@@ -161,7 +202,7 @@ device = torch.device(
 print(f"Using {device} device")
 ```
 
-### Using an initialized device
+### Using the initialized device
 
 Once a device is initialized, tensors and models must be created or copied on GPU memory to enable hardware acceleration.
 
@@ -210,7 +251,7 @@ When its `requires_grad` attribute is set to `True`, PyTorch records all aperati
 
 The backward pass kicks off when `.backward()` is called on the root of the graph, i.e. the output tensor(s).
 
-For the previous example, $\frac{\partial f(x)}{\partial x} = w$, $\frac{\partial f(x)}{\partial w} = x$ and $\frac{\partial f(x)}{\partial b} = 1$.
+For the previous example, we check that $\frac{\partial f(x)}{\partial x} = w$, $\frac{\partial f(x)}{\partial w} = x$ and $\frac{\partial f(x)}{\partial b} = 1$.
 
 ```python
 # Compute gradients of operations leading up to this tennsor
@@ -262,7 +303,11 @@ Backwards traversal computes the gradients for each operation, accumulates them 
 
 ![Backward traversal of the DAG](images/autodiff_backward_pass.png)
 
+> The mathematical details of the backward pass are detailed [here](https://github.com/bpesquet/mlcourse/tree/main/mlcourse/gradient_descent#step-2-backward-pass).
+
 ---
+
+As expected, $\frac{\partial}{\partial x_1}f(x_1,x_2) = \frac{1}{x_1} + x_2$ and $\frac{\partial}{\partial x_2}f(x_1,x_2) = x_1 - cos(x_2)$.
 
 ```python
 # Compute gradients
@@ -276,4 +321,172 @@ assert x2.grad == 2 - torch.cos(torch.tensor(5))
 
 ## Dataset loading
 
+PyTorch provides several utilities for dealing with datasets.
+
+### Using an integrated dataset
+
+The [torchvision](https://pytorch.org/vision/stable/index.html) package (a part of PyTorch) provides many built-in datasets. All of them have a similar API. They all have two common arguments: `transform` and `target_transform` to transform the input and target respectively.
+
+---
+
+#### Dataset download
+
+The following code downloads the famous MNIST handwritten digits dataset, then tests its first element.
+
+```python
+# Directory for downloaded files
+DATA_DIR = "./_output"
+
+# Download and construct the MNIST handwritten digits training dataset
+mnist = datasets.MNIST(
+    root=DATA_DIR, train=True, transform=transforms.ToTensor(), download=True
+)
+
+# Fetch one data pair (read data from disk)
+image, label = mnist[0]
+# MNIST samples are bitmap images of shape (color_depth, height, width).
+# Color depth is 1 for grayscale images
+assert image.shape == torch.Size([1, 28, 28])
+# Image label is a scalar value
+assert isinstance(label, int)
+```
+
+### Batch data loading
+
+Once a dataset is downloaded, the [DataLoader](https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader) class provides randomized batched iteration over it, a feature often needed during model training.
+
+```python
+# Number of samples in each batch
+batch_size = 32
+
+# Data loader (this provides queues and threads in a very simple way).
+mnist_dataloader = DataLoader(dataset=mnist, batch_size=batch_size, shuffle=True)
+
+# Number of batches in a training epoch (= n_samples / batch_size, rounded up)
+n_batches = len(mnist_dataloader)
+assert n_batches == math.ceil(len(mnist) / batch_size)
+```
+
+---
+
+```python
+# Loop-based iteration is the most convenient way to train models on batched data
+for x_batch, y_batch in mnist_dataloader:
+    # x_batch contains inputs for the current batch
+    assert x_batch.shape == torch.Size([batch_size, 1, 28, 28])
+    # y_batch contains targets for the current batch
+    assert y_batch.shape == torch.Size([batch_size])
+
+    # ... (Training code for the current batch should be written here)
+```
+
+### Using a scikit-learn dataset
+
+You can also use a `DataLoader` to process any dataset, such as in this example whichs uses the scikit-learn [make_circles()](https://scikit-learn.org/1.5/modules/generated/sklearn.datasets.make_circles.html) function to create a 2D dataset.
+
+```python
+# Number of generated samples
+n_samples = 500
+
+# Generate 2D data (two concentric circles)
+inputs, targets = make_circles(n_samples=n_samples, noise=0.1, factor=0.3)
+assert inputs.shape == (n_samples, 2)
+assert targets.shape == (n_samples,)
+```
+
+---
+
+```python
+# Create tensor for inputs
+x_train = torch.from_numpy(inputs).float()
+assert x_train.shape == torch.Size([n_samples, 2])
+
+# Create tensor for targets (labels)
+# PyTorch loss functions expect float results of shape (batch_size, 1) instead of (batch_size,)
+# So we add a new axis and convert them to floats
+y_train = torch.from_numpy(targets[:, np.newaxis]).float()
+assert y_train.shape == torch.Size([n_samples, 1])
+
+# Load data as randomized batches for training
+circles_dataloader = DataLoader(
+    list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True
+)
+# ... (Use dataloader as seen above)
+```
+
+### Using a custom dataset
+
+Lastly, PyTorch makes it possible to load custom datasets via the creation of a dedicated class that must implement three functions: `__init__`, `__len__`, and `__getitem__`.
+
+> See [here](https://pytorch.org/tutorials/beginner/basics/data_tutorial.html#creating-a-custom-dataset-for-your-files) for an example implementation of a custom dataset.
+
+```python
+class CustomDataset(Dataset):
+    """A custom Dataset class"""
+
+    def __init__(self):
+        # ... Init internal state (file paths, etc)
+
+    def __len__(self):
+        # ... Return the number of samples in the dataset
+
+    def __getitem__(self, index):
+        # ... Load, preprocess and return one data sample (inputs and label)
+```
+
+---
+
+Once a custom dataset is instantiated, it can be used by a `DataLoader` as seen above.
+
+```python
+custom_dataset = CustomDataset()
+custom_dataloader = DataLoader(dataset=custom_dataset,       
+    batch_size=batch_size, shuffle=True)
+# ... (Use dataloader for batched access to data)
+````
+
 ## Model loading and saving
+
+The [torchvision](https://pytorch.org/vision/stable/index.html) package includes several famous pre-trained vision models like [AlexNet](https://pytorch.org/vision/stable/models/alexnet.html), [VGG](https://pytorch.org/vision/stable/models/vgg.html) or [ResNet](https://pytorch.org/vision/stable/models/resnet.html).
+
+Models store their learned parameters in an internal state dictionary called `state_dict`. These can be persisted via the [torch.save()](https://pytorch.org/docs/main/generated/torch.save.html) method.
+
+---
+
+```python
+# Directory for saved model weights
+MODEL_DIR = "./_output"
+
+# Download and load the pretrained model ResNet-18
+resnet = models.resnet18(weights="ResNet18_Weights.DEFAULT")
+
+# Optional: copy downloaded model to device memory for hardware acceleration
+resnet = resnet.to(device)
+
+# Save model parameters (recommended way of saving models)
+resnet_weights_filepath = f"{MODEL_DIR}/resnet_weights.pth"
+torch.save(resnet.state_dict(), resnet_weights_filepath)
+```
+
+---
+
+The process for loading a model includes re-creating the model structure and loading the state dictionary into it.
+
+Previously saved weights can be loaded via the [torch.load()](https://pytorch.org/docs/stable/generated/torch.load.html)  function.
+
+```python
+# Load untrained model ResNet-18 on device momory
+resnet = models.resnet18().to(device)
+
+# Load saved weights (results of the training process)
+resnet.load_state_dict(torch.load(resnet_weights_filepath, weights_only=True))
+
+# Set model to evaluation mode (needed for consistent inference results).
+# Model is now ready for inference
+resnet.eval()
+```
+
+## Additional resources
+
+- [Introduction to PyTorch - YouTube Series](https://pytorch.org/tutorials/beginner/introyt/introyt_index.html)
+- [PyTorch: Learn the Basics](https://pytorch.org/tutorials/beginner/basics/intro.html)
