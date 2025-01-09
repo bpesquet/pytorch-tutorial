@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pytorch-tutorial"
 version = "0.1.0"
-description = "Concise and annotated implementations of various models with PyTorch"
+description = "Concise and annotated examples for learning PyTorch"
 authors = ["Baptiste Pesquet <bpesquet@gmail.com>"]
 license = "MIT"
 readme = "README.md"
