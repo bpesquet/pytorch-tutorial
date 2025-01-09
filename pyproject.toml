@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pytorch-tutorial"
 version = "0.1.0"
-description = ""
+description = "Concise and annotated implementations of various models with PyTorch"
 authors = ["Baptiste Pesquet <bpesquet@gmail.com>"]
 license = "MIT"
 readme = "README.md"
@@ -14,6 +14,8 @@ torch = "^2.4.1"
 torchvision = "^0.19.1"
 joblib = "^1.4.2"
 scikit-learn = "^1.6.0"
+matplotlib = "^3.10.0"
+seaborn = "^0.13.2"
 
 
 [tool.poetry.group.dev.dependencies]
