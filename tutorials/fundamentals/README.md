@@ -303,7 +303,7 @@ Backwards traversal computes the gradients for each operation, accumulates them 
 
 ![Backward traversal of the DAG](images/autodiff_backward_pass.png)
 
-> The mathematical details of the backward pass are detailed [here](https://github.com/bpesquet/mlcourse/tree/main/mlcourse/gradient_descent#step-2-backward-pass).
+> The mathematical details of the backward pass are detailed [here](https://github.com/bpesquet/mlcourse/tree/main/lectures/gradient_descent#step-2-backward-pass).
 
 ---
 
