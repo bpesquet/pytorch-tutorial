@@ -80,16 +80,18 @@ def test_linear_regression(show_plots=False):
         dtype=np.float32,
     )
 
-    # Convert dataset to PyTorch tensors
+    # Convert dataset to PyTorch tensors and put them on GPU memory (if available)
     x_train = torch.from_numpy(inputs).to(device)
     y_train = torch.from_numpy(targets).to(device)
 
-    # Create a Linear Regression model
+    # Create a Linear Regression model and put it on GPU memory
     model = nn.Linear(in_features=input_dim, out_features=output_dim).to(device)
 
     # Print model architecture and parameter count
     print(model)
-    print(f"{sum(p.numel() for p in model.parameters() if p.requires_grad)} parameters")
+    n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f"{n_params} parameters")
+    assert n_params == 2
 
     # Use Mean Squared Error loss
     criterion = nn.MSELoss()
@@ -98,6 +100,8 @@ def test_linear_regression(show_plots=False):
     for epoch in range(n_epochs):
         # Forward pass
         y_pred = model(x_train)
+
+        # Compute loss value
         loss = criterion(y_pred, y_train)
 
         # Reset the gradients to zero before running the backward pass.
