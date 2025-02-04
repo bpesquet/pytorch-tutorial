@@ -21,7 +21,7 @@ math: true  # Use default Marp engine for math rendering
 - an automatic differentiation engine;
 - an API for defining and training neural networks.
 
-This tutorial focuses on its fundamentals aspects: tensor manipulation, GPU support, autodifferentiation, data and model loading/saving.
+This [example](test_fundamentals.py) focuses on its fundamentals aspects: tensor manipulation, GPU support, autodifferentiation, data and model loading/saving.
 
 ## Importing PyTorch
 
@@ -38,7 +38,7 @@ import torch
 
 ---
 
-This tutorial uses several additional libraries that you must import using the following code.
+This example also uses several additional libraries that you must import using the following code.
 
 > You might need to install the [scikit-learn](https://scikit-learn.org) and [torchvision](https://pytorch.org/vision/stable/index.html) packages beforehand.
 
@@ -65,9 +65,9 @@ PyTorch tensors are quite similar to [NumPy](https://numpy.org)’s [ndarrays](h
 
 ### Tensor creation
 
-Tensors can be created in various ways. Here are some examples.
+Tensors have attributes describing their shape, datatype, and the device on which they are stored (more on that below).
 
-Tensors have attributes describing their shape, datatype, and the device on which they are stored (more on thath below).
+They can be created in various ways. Here are some examples.
 
 ---
 
@@ -411,6 +411,11 @@ assert y_train.shape == torch.Size([n_samples, 1])
 circles_dataloader = DataLoader(
     list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True
 )
+
+# Number of batches in a training epoch (= n_samples / batch_size, rounded up)
+n_batches = len(circles_dataloader)
+assert n_batches == math.ceil(n_samples / batch_size)
+
 # ... (Use dataloader as seen above)
 ```
 
@@ -440,10 +445,12 @@ Once a custom dataset is instantiated, it can be used by a `DataLoader` as seen 
 
 ```python
 custom_dataset = CustomDataset()
+
 custom_dataloader = DataLoader(dataset=custom_dataset,       
     batch_size=batch_size, shuffle=True)
+
 # ... (Use dataloader for batched access to data)
-````
+```
 
 ## Model loading and saving
 

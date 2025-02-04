@@ -225,7 +225,14 @@ def test_dataset_loading():
     assert y_train.shape == torch.Size([n_samples, 1])
 
     # Load data as randomized batches for training
-    _ = DataLoader(list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True)
+    circles_dataloader = DataLoader(
+        list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True
+    )
+
+    # Number of batches in a training epoch (= n_samples / batch_size, rounded up)
+    n_batches = len(circles_dataloader)
+    assert n_batches == math.ceil(n_samples / batch_size)
+
     # ... (Use dataloader as seen above)
 
     # Example 3: loading a custom dataset
@@ -249,7 +256,9 @@ def test_dataset_loading():
             pass
 
     custom_dataset = CustomDataset()
+
     _ = DataLoader(dataset=custom_dataset, batch_size=batch_size, shuffle=True)
+
     # ... (Use dataloader for batched access to data)
 
 

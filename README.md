@@ -6,8 +6,6 @@ This repository provides concise and annotated examples for learning [PyTorch](h
 
 ## Table of Contents
 
-### Basics
-
 - [Fundamentals](tutorials/fundamentals/)
 - [Linear Regression](tutorials/linear_regression/)
 - ... (more to come)
