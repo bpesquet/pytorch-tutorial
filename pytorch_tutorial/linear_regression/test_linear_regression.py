@@ -118,15 +118,36 @@ def test_linear_regression(show_plots=False):
         # Improve plots appearance
         sns.set_theme()
 
-        # Compute model results on training data, and convert them to a plain NumPy array
-        predicted = model(x_train).detach().cpu().numpy()
-
-        # Plot the training results
-        plt.plot(inputs, targets, "ro", label="Original data")
-        plt.plot(inputs, predicted, label="Fitted line")
-        plt.legend()
-        plt.title("Linear Regression with PyTorch")
+        _ = plot_training_results(
+            model=model, x=x_train, y=y_train, title="Linear Regression with PyTorch"
+        )
         plt.show()
+
+
+def plot_training_results(model, x, y, title):
+    """
+    Plot data and model predictions.
+
+    Args:
+        model (torch.nn.Module): Trained PyTorch model
+        x (torch.Tensor): Input features of shape (n_samples, 2)
+        y (torch.Tensor): Labels of shape (n_samples,)
+        title (str): Plot title
+    """
+    # Compute model results on training data, and convert them to a NumPy array
+    y_pred = model(x).detach().cpu().numpy()
+
+    # Convert inputs and targets to NumPy arrays
+    x_cpu = x.detach().cpu().numpy()
+    y_cpu = y.detach().cpu().numpy()
+
+    # Plot the training results
+    plt.plot(x_cpu, y_cpu, "ro", label="Original data")
+    plt.plot(x_cpu, y_pred, label="Fitted line")
+    plt.legend()
+    plt.title(title)
+
+    return plt.gcf()
 
 
 # Standalone execution
