@@ -7,7 +7,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import torch
 from torch import nn
-from pytorch_tutorial.utils import get_device, get_parameter_count
+from pytorch_tutorial.utils import (
+    get_device,
+    get_parameter_count,
+    plot_training_results,
+)
 
 
 def test_linear_regression(show_plots=False):
@@ -126,36 +130,6 @@ def test_linear_regression(show_plots=False):
             model=model, x=x_train, y=y_train, title="Linear Regression with PyTorch"
         )
         plt.show()
-
-
-def plot_training_results(model, x, y, title):
-    """
-    Plot data and model predictions.
-
-    Args:
-        model (torch.nn.Module): Trained PyTorch model
-        x (torch.Tensor): Input features of shape (n_samples, 2)
-        y (torch.Tensor): Labels of shape (n_samples,)
-        title (str): Plot title
-    """
-    # Set the model to evaluation mode - important for batch normalization and dropout layers.
-    # Unnecessary here but added for best practices
-    model.eval()
-
-    # Compute model results on training data, and convert them to a NumPy array
-    y_pred = model(x).detach().cpu().numpy()
-
-    # Convert inputs and targets to NumPy arrays
-    x_cpu = x.detach().cpu().numpy()
-    y_cpu = y.detach().cpu().numpy()
-
-    # Plot the training results
-    plt.plot(x_cpu, y_cpu, "ro", label="Original data")
-    plt.plot(x_cpu, y_pred, label="Fitted line")
-    plt.legend()
-    plt.title(title)
-
-    return plt.gcf()
 
 
 # Standalone execution
