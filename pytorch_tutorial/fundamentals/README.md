@@ -32,7 +32,7 @@ First and foremost, we need to import [torch](https://pytorch.org/docs/stable/to
 ```python
 import torch
 
-# Optional: print PyTorch version for debug purposes
+# Optional: print PyTorch version for debugging purposes
 # print(f"Using PyTorch {torch.__version__}")
 ```
 
@@ -192,14 +192,21 @@ PyTorch offers out-of-the-box support for [CUDA](https://developer.nvidia.com/cu
 
 ### Initializing a device
 
+To avoid code duplication, we define the detection code in its own function that we'll reuse in other examples.
+
 ```python
-# Access GPU device if available, or fall back to CPU
-device = torch.device(
-    "cuda"
-    if torch.cuda.is_available()
-    else "mps" if torch.backends.mps.is_available() else "cpu"
-)
-print(f"Using {device} device")
+def get_device():
+    """Return GPU device if available, or fall back to CPU"""
+
+    return torch.device(
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps" if torch.backends.mps.is_available() else "cpu"
+    )
+
+
+device = get_device()
+print(f"PyTorch {torch.__version__}, using {device} device")
 ```
 
 ### Using the initialized device

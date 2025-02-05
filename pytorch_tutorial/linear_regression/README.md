@@ -33,19 +33,11 @@ from torch import nn
 
 ## GPU support
 
-Let's probe for the availability of an accelerated device. To avoid code duplication, we define the detection code in its own function that we'll reuse in other examples.
+Let's probe for the availability of an accelerated device.
+
+> The `get_device()` function was defined in a [previous example](../fundamentals/README.md#gpu-support)
 
 ```python
-def get_device():
-    """Return GPU device if available, or fall back to CPU"""
-
-    return torch.device(
-        "cuda"
-        if torch.cuda.is_available()
-        else "mps" if torch.backends.mps.is_available() else "cpu"
-    )
-
-
 device = get_device()
 print(f"PyTorch {torch.__version__}, using {device} device")
 ```
@@ -197,6 +189,8 @@ for epoch in range(n_epochs):
 
 Finally, model predictions (fitted line) are plotted alongside training data.
 
+> The `plot_training_result()` function is defined below.
+
 ```python
 # Improve plots appearance
 sns.set_theme()
@@ -206,8 +200,6 @@ _ = plot_training_results(
 )
 plt.show()
 ```
-
-> The `plot_training_result()` function is defined below.
 
 ---
 

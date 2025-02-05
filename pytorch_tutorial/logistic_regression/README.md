@@ -35,12 +35,12 @@ from torch.utils.data import DataLoader
 
 ## GPU support
 
+> The `get_device()` function was defined in a [previous example](../fundamentals/README.md#gpu-support)
+
 ```python
 device = get_device()
 print(f"PyTorch {torch.__version__}, using {device} device")
 ```
-
-> The `get_device()` utility function was defined in a [previous example](../linear_regression/README.md#gpu-support).
 
 ## Hyperparameters
 
@@ -102,6 +102,8 @@ model = nn.Linear(in_features=2, out_features=output_dim).to(device)
 
 The number of parameters for this model is equal to the number of entries multiplied by the number of classes. We must take into account the bias (entry always equal to 1).
 
+> The `get_parameter_count()` function was defined in a [previous example](../linear_regression/README.md#parameter-count).
+
 ```python
 # Print model architecture
 print(model)
@@ -112,8 +114,6 @@ print(f"Model has {n_params} trainable parameters")
 # Number of entries is 2 (x- and y-coordinates) + 1 (bias)
 assert n_params == 3 * output_dim
 ```
-
-> The `get_parameter_count()` utility function was defined in a [previous example](../linear_regression/README.md#parameter-count).
 
 ## Loss function
 
@@ -201,6 +201,8 @@ for epoch in range(n_epochs):
 
 Finally, we plot the data and decision boundaries (model prediction for each region of the 2D plane) for this example.
 
+> The `plot_decision_boundaries()` function is defined below.
+
 ```python
 # Improve plots appearance
 sns.set_theme()
@@ -214,8 +216,6 @@ _ = plot_decision_boundaries(
 )
 plt.show()
 ```
-
-> The `plot_decision_boundaries()` function is defined below.
 
 ---
 
