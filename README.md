@@ -8,6 +8,7 @@ This repository provides concise and annotated examples for learning [PyTorch](h
 
 - [Fundamentals](pytorch_tutorial/fundamentals/)
 - [Linear Regression](pytorch_tutorial/linear_regression/)
+- [Logistic Regression](pytorch_tutorial/logistic_regression/)
 - ... (more to come)
 
 ## Usage
@@ -38,11 +39,11 @@ This project is built with the following software:
 black .
 
 # Check the code for mistakes
-pylint pytorch_tutorial
+pylint pytorch_tutorial/*
 
 # Run all code examples as unit tests
 # The -s flag prints code output
-pytest [-s] .
+pytest [-s]
 ```
 
 ## License

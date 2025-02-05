@@ -30,7 +30,7 @@ def test_logistic_regression(show_plots=False):
     learning_rate = 0.001
     batch_size = 32
 
-    # Generate a 2D toy dataset with scikit-learn
+    # Generate a 2D dataset with scikit-learn
     inputs, targets = make_blobs(  # pylint: disable=unbalanced-tuple-unpacking
         n_samples=n_samples,
         n_features=2,  # x- and y-coordinates
@@ -48,24 +48,20 @@ def test_logistic_regression(show_plots=False):
         list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True
     )
 
-    # Number of samples
-    n_samples = len(blobs_dataloader.dataset)
-
-    # Number of batches in an epoch (= n_samples / batch_size, rounded up)
-    n_batches = len(blobs_dataloader)
-
     # Create a logistic regression model for the 2D dataset
     model = nn.Linear(in_features=2, out_features=output_dim).to(device)
 
-    # Print model architecture and parameter count
+    # Print model architecture
     print(model)
+
+    # Compute and print parameter count
     n_params = get_parameter_count(model)
     print(f"Model has {n_params} trainable parameters")
     # Number of entries is 2 (x- and y-coordinates) + 1 (bias)
     assert n_params == 3 * output_dim
 
     # Use cross-entropy loss function.
-    # nn.CrossEntropyLoss computes softmax internally to convert model outputs into probabilities
+    # Softmax is computed internally to convert outputs into probabilities
     criterion = nn.CrossEntropyLoss()
 
     # Use a vanilla mini-batch stochastic gradient descent optimizer
@@ -74,6 +70,12 @@ def test_logistic_regression(show_plots=False):
     # Set the model to training mode - important for batch normalization and dropout layers.
     # Unnecessary here but added for best practices
     model.train()
+
+    # Number of samples
+    n_samples = len(blobs_dataloader.dataset)
+
+    # Number of batches in an epoch (= n_samples / batch_size, rounded up)
+    n_batches = len(blobs_dataloader)
 
     # Train the model
     for epoch in range(n_epochs):

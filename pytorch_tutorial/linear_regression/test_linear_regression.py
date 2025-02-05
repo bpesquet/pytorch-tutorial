@@ -76,8 +76,10 @@ def test_linear_regression(show_plots=False):
     # Create a Linear Regression model and put it on GPU memory
     model = nn.Linear(in_features=1, out_features=1).to(device)
 
-    # Print model architecture and parameter count
+    # Print model architecture
     print(model)
+
+    # Compute and print parameter count
     n_params = get_parameter_count(model)
     print(f"Model has {n_params} trainable parameters")
     assert n_params == 2

@@ -15,7 +15,7 @@ math: true  # Use default Marp engine for math rendering
 
 ## Scope and objective
 
-This [example](test_linear_regression.py) trains a Linear Regression model on a minimalist 2D dataset.
+This example trains a Linear Regression model on a minimalist 2D dataset. The complete sourse code is available [here](test_linear_regression.py).
 
 ![Training outcome](images/linear_regression.png)
 
@@ -33,7 +33,7 @@ from torch import nn
 
 ## GPU support
 
-Let's probe for the availability of an accelerated device.
+Let's probe for the availability of an accelerated device. To avoid code duplication, we define the detection code in its own function that we'll reuse in other examples.
 
 ```python
 def get_device():
@@ -111,9 +111,11 @@ This model has one input (the x-coordinate of a sample) and one output (its y-co
 model = nn.Linear(in_features=1, out_features=1).to(device)
 ```
 
----
+### Parameter count
 
 The model defines a function $f(x) = w_0 + w_1 x$. It has two parameters: $w_0$ and $w_1$.
+
+We define a function to count model parameters that will be reused in other examples.
 
 ```python
 def get_parameter_count(model):
@@ -122,8 +124,10 @@ def get_parameter_count(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-# Print model architecture and parameter count
+# Print model architecture
 print(model)
+
+# Compute and print parameter count
 n_params = get_parameter_count(model)
 print(f"Model has {n_params} trainable parameters")
 assert n_params == 2
@@ -140,11 +144,11 @@ criterion = nn.MSELoss()
 
 ## Training loop
 
-The loop for training a PyTorch model in a supervised way has four main parts:
+The loop for training a PyTorch model in a supervised way is always composed of four main parts:
 
-1. compute the outputs for a set of inputs;
-2. compute the value of the loss function (difference between expected and actual values) for this set of inputs;
-3. use autodiff to obtain the gradients of the loss functions w.r.t each model parameters;
+1. compute the model outputs for a set of inputs;
+2. compute the value of the loss function (difference between expected and actual values);
+3. use autodiff to obtain the gradients of the loss functions w.r.t each model parameter;
 4. update each parameter in the opposite direction of its gradient.
 
 ---
@@ -193,8 +197,6 @@ for epoch in range(n_epochs):
 
 Finally, model predictions (fitted line) are plotted alongside training data.
 
-> The `plot_training_result()` function is defined below.
-
 ```python
 # Improve plots appearance
 sns.set_theme()
@@ -204,6 +206,8 @@ _ = plot_training_results(
 )
 plt.show()
 ```
+
+> The `plot_training_result()` function is defined below.
 
 ---
 
