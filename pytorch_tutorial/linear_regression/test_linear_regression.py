@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import torch
 from torch import nn
-from pytorch_tutorial.utils import get_device
+from pytorch_tutorial.utils import get_device, get_parameter_count
 
 
 def test_linear_regression(show_plots=False):
@@ -22,8 +22,6 @@ def test_linear_regression(show_plots=False):
     print(f"PyTorch {torch.__version__}, using {device} device")
 
     # Hyperparameters
-    input_dim = 1
-    output_dim = 1
     n_epochs = 60
     learning_rate = 0.001
 
@@ -76,16 +74,20 @@ def test_linear_regression(show_plots=False):
     y_train = torch.from_numpy(targets).to(device)
 
     # Create a Linear Regression model and put it on GPU memory
-    model = nn.Linear(in_features=input_dim, out_features=output_dim).to(device)
+    model = nn.Linear(in_features=1, out_features=1).to(device)
 
     # Print model architecture and parameter count
     print(model)
-    n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"Model has {n_params} parameters")
-    assert n_params == (input_dim + 1) * output_dim
+    n_params = get_parameter_count(model)
+    print(f"Model has {n_params} trainable parameters")
+    assert n_params == 2
 
     # Use Mean Squared Error loss
     criterion = nn.MSELoss()
+
+    # Set the model to training mode - important for batch normalization and dropout layers.
+    # Unnecessary here but added for best practices
+    model.train()
 
     # Train the model
     for epoch in range(n_epochs):
@@ -134,6 +136,10 @@ def plot_training_results(model, x, y, title):
         y (torch.Tensor): Labels of shape (n_samples,)
         title (str): Plot title
     """
+    # Set the model to evaluation mode - important for batch normalization and dropout layers.
+    # Unnecessary here but added for best practices
+    model.eval()
+
     # Compute model results on training data, and convert them to a NumPy array
     y_pred = model(x).detach().cpu().numpy()
 

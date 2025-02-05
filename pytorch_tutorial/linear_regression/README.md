@@ -36,12 +36,17 @@ from torch import nn
 Let's probe for the availability of an accelerated device.
 
 ```python
-# Accessing GPU device if available, or failing back to CPU
-device = torch.device(
-    "cuda"
-    if torch.cuda.is_available()
-    else "mps" if torch.backends.mps.is_available() else "cpu"
-)
+def get_device():
+    """Return GPU device if available, or fall back to CPU"""
+
+    return torch.device(
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps" if torch.backends.mps.is_available() else "cpu"
+    )
+
+
+device = get_device()
 print(f"PyTorch {torch.__version__}, using {device} device")
 ```
 
@@ -51,8 +56,6 @@ Next, we define the various hyperparameters for this example.
 
 ```python
 # Hyperparameters
-input_dim = 1
-output_dim = 1
 n_epochs = 60
 learning_rate = 0.001
 ```
@@ -101,19 +104,29 @@ y_train = torch.from_numpy(targets).to(device)
 
 The Linear Regression model is implemented with the PyTorch [Linear](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html) class, which applies an affine tranformation to its input.
 
+This model has one input (the x-coordinate of a sample) and one output (its y-coordinate).
+
 ```python
 # Create a Linear Regression model and put it on GPU memory
-model = nn.Linear(in_features=input_dim, out_features=output_dim).to(device)
+model = nn.Linear(in_features=1, out_features=1).to(device)
 ```
 
-This model defines a function $f(x) = w_0 + w_1 x$. It has two parameters: $w_0$ and $w_1$.
+---
+
+The model defines a function $f(x) = w_0 + w_1 x$. It has two parameters: $w_0$ and $w_1$.
 
 ```python
+def get_parameter_count(model):
+    """Return the number of trainable parameters for a PyTorch model"""
+
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
 # Print model architecture and parameter count
 print(model)
-n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-print(f"Model has {n_params} parameters")
-assert n_params == (input_dim + 1) * output_dim
+n_params = get_parameter_count(model)
+print(f"Model has {n_params} trainable parameters")
+assert n_params == 2
 ```
 
 ## Loss function
@@ -144,6 +157,10 @@ In this example, it is implemented in the simplest way possible.
 ---
 
 ```python
+# Set the model to training mode - important for batch normalization and dropout layers.
+# Unnecessary here but added for best practices
+model.train()
+
 # Train the model
 for epoch in range(n_epochs):
     # Forward pass
@@ -174,19 +191,49 @@ for epoch in range(n_epochs):
 
 ## Results plotting
 
-Finally model predictions (fitted line) are plotted alongside training data.
+Finally, model predictions (fitted line) are plotted alongside training data.
+
+> The `plot_training_result()` function is defined below.
 
 ```python
 # Improve plots appearance
 sns.set_theme()
 
-# Compute model results on training data, and convert them to a plain NumPy array
-predicted = model(x_train).detach().cpu().numpy()
-
-# Plot the training results
-plt.plot(inputs, targets, "ro", label="Original data")
-plt.plot(inputs, predicted, label="Fitted line")
-plt.legend()
-plt.title("Linear Regression with PyTorch")
+_ = plot_training_results(
+    model=model, x=x_train, y=y_train, title="Linear Regression with PyTorch"
+)
 plt.show()
+```
+
+---
+
+```python
+def plot_training_results(model, x, y, title):
+    """
+    Plot data and model predictions.
+
+    Args:
+        model (torch.nn.Module): Trained PyTorch model
+        x (torch.Tensor): Input features of shape (n_samples, 2)
+        y (torch.Tensor): Labels of shape (n_samples,)
+        title (str): Plot title
+    """
+    # Set the model to evaluation mode - important for batch normalization and dropout layers.
+    # Unnecessary here but added for best practices
+    model.eval()
+
+    # Compute model results on training data, and convert them to a NumPy array
+    y_pred = model(x).detach().cpu().numpy()
+
+    # Convert inputs and targets to NumPy arrays
+    x_cpu = x.detach().cpu().numpy()
+    y_cpu = y.detach().cpu().numpy()
+
+    # Plot the training results
+    plt.plot(x_cpu, y_cpu, "ro", label="Original data")
+    plt.plot(x_cpu, y_pred, label="Fitted line")
+    plt.legend()
+    plt.title(title)
+
+    return plt.gcf()
 ```
