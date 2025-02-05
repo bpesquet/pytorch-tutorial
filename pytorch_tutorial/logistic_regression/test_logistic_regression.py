@@ -9,7 +9,7 @@ from sklearn.datasets import make_blobs
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from pytorch_tutorial.utils import get_device
+from pytorch_tutorial.utils import get_device, get_parameter_count
 
 
 def test_logistic_regression(show_plots=False):
@@ -25,16 +25,15 @@ def test_logistic_regression(show_plots=False):
 
     # Hyperparameters
     n_samples = 1000
-    input_dim = 2
     output_dim = 3  # Number of classes
     n_epochs = 60
     learning_rate = 0.001
     batch_size = 32
 
-    # Generate a toy dataset with scikit-learn
+    # Generate a 2D toy dataset with scikit-learn
     inputs, targets = make_blobs(  # pylint: disable=unbalanced-tuple-unpacking
         n_samples=n_samples,
-        n_features=input_dim,
+        n_features=2,  # x- and y-coordinates
         centers=output_dim,
         cluster_std=0.5,
         random_state=0,
@@ -55,14 +54,15 @@ def test_logistic_regression(show_plots=False):
     # Number of batches in an epoch (= n_samples / batch_size, rounded up)
     n_batches = len(blobs_dataloader)
 
-    # Create a Logistic regression model
-    model = nn.Linear(in_features=input_dim, out_features=output_dim).to(device)
+    # Create a logistic regression model for the 2D dataset
+    model = nn.Linear(in_features=2, out_features=output_dim).to(device)
 
     # Print model architecture and parameter count
     print(model)
-    n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"Model has {n_params} parameters")
-    assert n_params == (input_dim + 1) * output_dim
+    n_params = get_parameter_count(model)
+    print(f"Model has {n_params} trainable parameters")
+    # Number of entries is 2 (x- and y-coordinates) + 1 (bias)
+    assert n_params == 3 * output_dim
 
     # Use cross-entropy loss function.
     # nn.CrossEntropyLoss computes softmax internally to convert model outputs into probabilities
@@ -70,6 +70,10 @@ def test_logistic_regression(show_plots=False):
 
     # Use a vanilla mini-batch stochastic gradient descent optimizer
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+
+    # Set the model to training mode - important for batch normalization and dropout layers.
+    # Unnecessary here but added for best practices
+    model.train()
 
     # Train the model
     for epoch in range(n_epochs):
@@ -112,17 +116,17 @@ def test_logistic_regression(show_plots=False):
         # Improve plots appearance
         sns.set_theme()
 
-        fig = plot_decision_boundary(
+        _ = plot_decision_boundaries(
             model=model,
-            inputs=x_train,
-            targets=y_train,
-            device=device,
+            x=x_train,
+            y=y_train,
             title="Logistic Regression with PyTorch",
+            device=device,
         )
         plt.show()
 
 
-def plot_decision_boundary(model, inputs, targets, device, title):
+def plot_decision_boundaries(model, x, y, title, device):
     """
     Plot the decision boundaries and data points for a PyTorch classifier.
 
@@ -131,54 +135,52 @@ def plot_decision_boundary(model, inputs, targets, device, title):
         inputs (torch.Tensor): Input features of shape (n_samples, 2)
         targets (torch.Tensor): Labels of shape (n_samples,)
         title (str): Plot title
+        device (torch.device): device where data on model are stored
     """
-    # Set model to evaluation mode
+    # Set the model to evaluation mode - important for batch normalization and dropout layers.
+    # Unnecessary here but added for best practices
     model.eval()
 
-    inputs = inputs.detach().cpu()
-    targets = targets.detach().cpu()
+    # Convert inputs and targets to NumPy arrays
+    x_cpu = x.detach().cpu().numpy()
+    y_cpu = y.detach().cpu().numpy()
 
     # Determine bounds for the grid
-    x_min, x_max = inputs[:, 0].min() - 1, inputs[:, 0].max() + 1
-    y_min, y_max = inputs[:, 1].min() - 1, inputs[:, 1].max() + 1
+    x_min, x_max = x_cpu[:, 0].min() - 1, x_cpu[:, 0].max() + 1
+    y_min, y_max = x_cpu[:, 1].min() - 1, x_cpu[:, 1].max() + 1
 
-    # Create a mesh grid
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
+    # Generate a grid of points with distance h between them
+    h = 0.02
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 
-    # Convert mesh to PyTorch tensors
-    X_mesh = torch.FloatTensor(np.c_[xx.ravel(), yy.ravel()]).to(device)
+    # Convert mesh to PyTorch tensors and put it on device memory
+    x_mesh = torch.FloatTensor(np.c_[xx.ravel(), yy.ravel()]).to(device)
 
     # Get predictions for mesh points
     with torch.no_grad():
-        Z = model(X_mesh).detach().cpu()
-        if Z.shape[1] > 1:  # For multi-class problems
-            Z = torch.argmax(Z, dim=1)
+        y_mesh = model(x_mesh).detach().cpu()
+        if y_mesh.shape[1] > 1:  # For multi-class problems
+            y_mesh = torch.argmax(y_mesh, dim=1)
         else:  # For binary classification
-            Z = (Z > 0).float()
+            y_mesh = (y_mesh > 0).float()
 
     # Reshape predictions to match mesh shape
-    Z = Z.numpy().reshape(xx.shape)
+    y_mesh = y_mesh.numpy().reshape(xx.shape)
 
     # Create the plot
     plt.figure()
 
-    # Plot decision boundary
-    plt.contourf(xx, yy, Z, alpha=0.4, cmap="RdYlBu")
-    plt.contour(xx, yy, Z, colors="k", linewidths=0.5)
+    # Plot decision boundaries
+    plt.contourf(xx, yy, y_mesh, alpha=0.4, cmap="RdYlBu")
+    plt.contour(xx, yy, y_mesh, colors="k", linewidths=0.5)
 
-    # Plot data points
+    # # Plot data points
     scatter = plt.scatter(
-        inputs[:, 0], inputs[:, 1], c=targets, cmap="RdYlBu", linewidth=1, alpha=0.8
+        x_cpu[:, 0], x_cpu[:, 1], c=y_cpu, cmap="RdYlBu", linewidth=1, alpha=0.8
     )
 
-    # Customize plot
-    plt.title(title)
-    # plt.xlabel("Feature 1")
-    # plt.ylabel("Feature 2")
-    # plt.colorbar(scatter)
-
     # Add legend
-    unique_labels = torch.unique(targets)
+    unique_labels = np.unique(y_cpu)
     legend_elements = [
         plt.Line2D(
             [0],
@@ -193,7 +195,8 @@ def plot_decision_boundary(model, inputs, targets, device, title):
     ]
     plt.legend(handles=legend_elements)
 
-    plt.tight_layout()
+    plt.title(title)
+
     return plt.gcf()
 
 
