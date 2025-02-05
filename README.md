@@ -6,8 +6,8 @@ This repository provides concise and annotated examples for learning [PyTorch](h
 
 ## Table of Contents
 
-- [Fundamentals](tutorials/fundamentals/)
-- [Linear Regression](tutorials/linear_regression/)
+- [Fundamentals](pytorch_tutorial/fundamentals/)
+- [Linear Regression](pytorch_tutorial/linear_regression/)
 - ... (more to come)
 
 ## Usage
@@ -15,6 +15,7 @@ This repository provides concise and annotated examples for learning [PyTorch](h
 ```bash
 git clone https://github.com/bpesquet/pytorch-tutorial.git
 cd pytorch-tutorial
+poetry install
 python {path to Python example file}
 ```
 
@@ -37,7 +38,7 @@ This project is built with the following software:
 black .
 
 # Check the code for mistakes
-pylint tutorials
+pylint pytorch_tutorial
 
 # Run all code examples as unit tests
 # The -s flag prints code output

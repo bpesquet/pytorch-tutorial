@@ -8,19 +8,10 @@ from sklearn.datasets import make_circles
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import datasets, transforms, models
+from pytorch_tutorial.utils import get_device
 
 # Directory for downloaded files and saved model weights
 DATA_DIR = MODEL_DIR = "./_output"
-
-
-def get_device():
-    """Return GPU device if available, or fall back to CPU"""
-
-    return torch.device(
-        "cuda"
-        if torch.cuda.is_available()
-        else "mps" if torch.backends.mps.is_available() else "cpu"
-    )
 
 
 def test_tensor_manipulation():

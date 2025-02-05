@@ -2,14 +2,14 @@
 Logistic Regression with PyTorch
 """
 
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.datasets import make_blobs
-from sklearn.base import BaseEstimator
-from sklearn.inspection import DecisionBoundaryDisplay
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
+from pytorch_tutorial.utils import get_device
 
 
 def test_logistic_regression(show_plots=False):
@@ -20,18 +20,8 @@ def test_logistic_regression(show_plots=False):
         show_plots (bool): Flag for plotting the training outcome
     """
 
-    # Allow device detection code to be duplicated between examples
-    # pylint: disable=duplicate-code
-
-    # Accessing GPU device if available, or failing back to CPU
-    device = torch.device(
-        "cuda"
-        if torch.cuda.is_available()
-        else "mps" if torch.backends.mps.is_available() else "cpu"
-    )
+    device = get_device()
     print(f"PyTorch {torch.__version__}, using {device} device")
-
-    # pylint: enable=duplicate-code
 
     # Hyperparameters
     n_samples = 1000
@@ -49,15 +39,6 @@ def test_logistic_regression(show_plots=False):
         cluster_std=0.5,
         random_state=0,
     )
-
-    if show_plots:
-        # Improve plots appearance
-        sns.set_theme()
-
-        # Plot dataset
-        plt.scatter(inputs[:, 0], inputs[:, 1], marker="o", c=targets, edgecolor="k")
-        plt.title("Logistic Regression with PyTorch: dataset")
-        plt.show()
 
     # Convert dataset to PyTorch tensors and put them on GPU memory (if available)
     x_train = torch.from_numpy(inputs).float().to(device)
@@ -128,36 +109,92 @@ def test_logistic_regression(show_plots=False):
             )
 
     if show_plots:
+        # Improve plots appearance
+        sns.set_theme()
 
-        class Estimator(BaseEstimator):
-            def __init__(self, model):
-                self.model = model
-
-            def __sklearn_tags__(self):
-                tags = super().__sklearn_tags__()
-                tags.requires_fit = False
-                return tags
-
-            def fit(self, __):
-                pass
-
-            def predict(self, x):
-                x_gpu = torch.from_numpy(x).float().to(device)
-                return self.model(x_gpu).detach().cpu().numpy()
-
-        classifier = Estimator(model=model)
-
-        # Show datasets and classification boundaries
-        plt.figure()
-        disp = DecisionBoundaryDisplay.from_estimator(
-            classifier,
-            inputs,
-            response_method="predict",
-            alpha=0.5,
+        fig = plot_decision_boundary(
+            model=model,
+            inputs=x_train,
+            targets=y_train,
+            device=device,
+            title="Logistic Regression with PyTorch",
         )
-        disp.ax_.scatter(inputs[:, 0], inputs[:, 1], c=targets, edgecolor="k")
-        plt.title("Logistic Regression with PyTorch: training outcome")
         plt.show()
+
+
+def plot_decision_boundary(model, inputs, targets, device, title):
+    """
+    Plot the decision boundaries and data points for a PyTorch classifier.
+
+    Args:
+        model (torch.nn.Module): Trained PyTorch model
+        inputs (torch.Tensor): Input features of shape (n_samples, 2)
+        targets (torch.Tensor): Labels of shape (n_samples,)
+        title (str): Plot title
+    """
+    # Set model to evaluation mode
+    model.eval()
+
+    inputs = inputs.detach().cpu()
+    targets = targets.detach().cpu()
+
+    # Determine bounds for the grid
+    x_min, x_max = inputs[:, 0].min() - 1, inputs[:, 0].max() + 1
+    y_min, y_max = inputs[:, 1].min() - 1, inputs[:, 1].max() + 1
+
+    # Create a mesh grid
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.02), np.arange(y_min, y_max, 0.02))
+
+    # Convert mesh to PyTorch tensors
+    X_mesh = torch.FloatTensor(np.c_[xx.ravel(), yy.ravel()]).to(device)
+
+    # Get predictions for mesh points
+    with torch.no_grad():
+        Z = model(X_mesh).detach().cpu()
+        if Z.shape[1] > 1:  # For multi-class problems
+            Z = torch.argmax(Z, dim=1)
+        else:  # For binary classification
+            Z = (Z > 0).float()
+
+    # Reshape predictions to match mesh shape
+    Z = Z.numpy().reshape(xx.shape)
+
+    # Create the plot
+    plt.figure()
+
+    # Plot decision boundary
+    plt.contourf(xx, yy, Z, alpha=0.4, cmap="RdYlBu")
+    plt.contour(xx, yy, Z, colors="k", linewidths=0.5)
+
+    # Plot data points
+    scatter = plt.scatter(
+        inputs[:, 0], inputs[:, 1], c=targets, cmap="RdYlBu", linewidth=1, alpha=0.8
+    )
+
+    # Customize plot
+    plt.title(title)
+    # plt.xlabel("Feature 1")
+    # plt.ylabel("Feature 2")
+    # plt.colorbar(scatter)
+
+    # Add legend
+    unique_labels = torch.unique(targets)
+    legend_elements = [
+        plt.Line2D(
+            [0],
+            [0],
+            marker="o",
+            color="w",
+            markerfacecolor=scatter.cmap(scatter.norm(label.item())),
+            markersize=10,
+            label=f"Class {label.item()}",
+        )
+        for label in unique_labels
+    ]
+    plt.legend(handles=legend_elements)
+
+    plt.tight_layout()
+    return plt.gcf()
 
 
 # Standalone execution

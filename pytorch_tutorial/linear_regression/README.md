@@ -112,8 +112,8 @@ This model defines a function $f(x) = w_0 + w_1 x$. It has two parameters: $w_0$
 # Print model architecture and parameter count
 print(model)
 n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-print(f"{n_params} parameters")
-assert n_params == 2
+print(f"Model has {n_params} parameters")
+assert n_params == (input_dim + 1) * output_dim
 ```
 
 ## Loss function

@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import torch
 from torch import nn
+from pytorch_tutorial.utils import get_device
 
 
 def test_linear_regression(show_plots=False):
@@ -17,18 +18,8 @@ def test_linear_regression(show_plots=False):
         show_plots (bool): Flag for plotting the training outcome
     """
 
-    # Allow device detection code to be duplicated between examples
-    # pylint: disable=duplicate-code
-
-    # Accessing GPU device if available, or failing back to CPU
-    device = torch.device(
-        "cuda"
-        if torch.cuda.is_available()
-        else "mps" if torch.backends.mps.is_available() else "cpu"
-    )
+    device = get_device()
     print(f"PyTorch {torch.__version__}, using {device} device")
-
-    # pylint: enable=duplicate-code
 
     # Hyperparameters
     input_dim = 1
@@ -90,8 +81,8 @@ def test_linear_regression(show_plots=False):
     # Print model architecture and parameter count
     print(model)
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"{n_params} parameters")
-    assert n_params == 2
+    print(f"Model has {n_params} parameters")
+    assert n_params == (input_dim + 1) * output_dim
 
     # Use Mean Squared Error loss
     criterion = nn.MSELoss()
