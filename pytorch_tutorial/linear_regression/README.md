@@ -56,7 +56,7 @@ learning_rate = 0.001  # Rate of parameter change during gradient descent
 
 To keep things as simple as possible, the dataset is created from scratch as two NumPy arrays: `ìnputs` (x-coordinates of the samples) and `targets` (corresponding y-coordinates of the samples).
 
-### Inputs and targets
+### Data generation
 
 ```python
 # Toy dataset: inputs and expected results
@@ -78,7 +78,7 @@ dtype=np.float32,
 print(f"Inputs: {inputs.shape}. targets: {targets.shape}")
 ```
 
-### Tensors creation
+### Conversion to PyTorch tensors
 
 Both inputs and targets are subsequently converted to PyTorch tensors stored into the device memory.
 
@@ -141,10 +141,12 @@ The loop for training a PyTorch model in a supervised way is always composed of 
 
 ---
 
-In this example, it is implemented in the simplest way possible.
+In this first example, the training loop is implemented in the simplest way possible.
 
 - No batching: due to the small sample count, the whole dataset is used at each epoch (training iteration).
-- Model parameters are updated by hand rather than by using a pre-built optimizer. This choice is made to better illustrate the Gradient Descent algorithm.
+- Model parameters are updated manually rather than by using a pre-built optimizer. This choice is made to better illustrate the gradient descent algorithm.
+
+Subsequent examples will use more standard techniques.
 
 ---
 

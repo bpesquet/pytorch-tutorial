@@ -25,13 +25,17 @@ As usual, we start by importing the necessary packages.
 
 ```python
 import math
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.datasets import make_blobs
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
+from pytorch_tutorial.utils import (
+    get_device,
+    get_parameter_count,
+    plot_decision_boundaries,
+)
 ```
 
 ## GPU support
@@ -56,9 +60,11 @@ learning_rate = 0.001  # Rate of parameter change during gradient descent
 batch_size = 32  # Number of samples used for one gradient descent step
 ```
 
-## Data generation
+## Dataset loading
 
-The [scikit-learn](https://scikit-learn.org) library is used to generate a simple 2D dataset. The number of classes is defined by the `output_dim` hyperparameter.
+### Data generation
+
+A [scikit-learn function](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_blobs.html) is used to generate a simple 2D dataset. The number of classes is defined by the `output_dim` hyperparameter.
 
 ```python
 # Generate a 2D dataset with scikit-learn
@@ -74,17 +80,21 @@ assert inputs.shape == (n_samples, 2)
 assert targets.shape == (n_samples,)
 ```
 
-## Dataset loading
+### Conversion to PyTorch tensors
 
 Inputs and targets are converted to PyTorch tensors and put on GPU memory (if available).
-
-The PyTorch [DataLoader](https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader) class is used to load data in batches during model training.
 
 ```python
 # Convert dataset to PyTorch tensors and put them on GPU memory (if available)
 x_train = torch.from_numpy(inputs).float().to(device)
 y_train = torch.from_numpy(targets).int().to(device)
+```
 
+### Batch loading
+
+The PyTorch [DataLoader](https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader) class is used to load data in batches during model training.
+
+```python
 # Create data loader for loading data as randomized batches
 blobs_dataloader = DataLoader(
     list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True
@@ -108,7 +118,7 @@ model = nn.Linear(in_features=2, out_features=output_dim).to(device)
 
 ### Parameter count
 
-The number of parameters for this model is equal to the number of entries multiplied by the number of classes. We must take into account the bias (entry always equal to 1).
+The number of parameters for this model is equal to the number of entries multiplied by the number of classes. We must take into account the biases (additional entries always equal to 1).
 
 > The `get_parameter_count()` utility function was defined in a [previous example](../linear_regression/README.md#parameter-count).
 
@@ -125,7 +135,7 @@ assert n_params == 3 * output_dim
 
 ## Loss function
 
-This classification example uses the [cross-entropy](https://github.com/bpesquet/mlcourse/tree/main/lectures/classification_performance) a.k.a. negative log-likelihood loss function, implemented by the [CrossEntropyLoss](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html) class.
+This classification example uses the [cross-entropy](https://github.com/bpesquet/mlcourse/tree/main/lectures/classification_performance#assessing-performance-during-training-1) a.k.a. negative log-likelihood loss function, implemented by the [CrossEntropyLoss](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html) class.
 
 > PyTorch also offers the [NLLLoss](https://pytorch.org/docs/stable/generated/torch.nn.NLLLoss.html#torch.nn.NLLLoss) class implementing the negative log-likelihood loss. A key difference is that `CrossEntropyLoss` expects *logits*  (raw, unnormalized predictions) as inputs, and uses [LogSoftmax](https://pytorch.org/docs/stable/generated/torch.nn.LogSoftmax.html#torch.nn.LogSoftmax) to transform them into probabilities before computing its output. Using `CrossEntropyLoss` is equivalent to applying `LogSoftmax` followed by `NLLLoss` ([more details](https://towardsdatascience.com/cross-entropy-negative-log-likelihood-and-all-that-jazz-47a95bd2e81)).
 
