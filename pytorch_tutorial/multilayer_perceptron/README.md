@@ -32,11 +32,6 @@ from sklearn.datasets import make_circles
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from pytorch_tutorial.utils import (
-    get_device,
-    get_parameter_count,
-    plot_decision_boundaries,
-)
 ```
 
 ## GPU support
