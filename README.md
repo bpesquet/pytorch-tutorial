@@ -28,9 +28,10 @@ This project is built with the following software:
 
 - [Poetry](https://python-poetry.org/) for dependency management;
 - [Black](https://github.com/psf/black) for code formatting;
-- [Pylint](https://github.com/pylint-dev/pylint) to detect mistakes in the code;
-- [pytest](https://docs.pytest.org) for testing the code;
-- [Marp](https://marp.app/) for showcasing Markdown files as slideshows during labs.
+- [Pylint](https://github.com/pylint-dev/pylint) to detect mistakes in the codebase;
+- [pytest](https://docs.pytest.org) for testing examples;
+- a [GitHub Action](.github/workflows/ci.yaml) for validating the code upon each push;
+- [Marp](https://marp.app/) for showcasing `README` files as slideshows during lectures or labs.
 
 ### Useful commands
 
@@ -38,7 +39,7 @@ This project is built with the following software:
 # Reformat all Python files
 black .
 
-# Check the code for mistakes
+# Check the codebase for mistakes
 pylint pytorch_tutorial/*
 
 # Run all code examples as unit tests
