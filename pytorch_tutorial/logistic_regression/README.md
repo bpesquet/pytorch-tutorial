@@ -129,7 +129,7 @@ print(model)
 # Compute and print parameter count
 n_params = get_parameter_count(model)
 print(f"Model has {n_params} trainable parameters")
-# Number of entries is 2 (x- and y-coordinates) + 1 (bias)
+# Linear layers have (in_features + 1) * out_features parameters
 assert n_params == 3 * output_dim
 ```
 

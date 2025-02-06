@@ -118,6 +118,7 @@ print(model)
 # Compute and print parameter count
 n_params = get_parameter_count(model)
 print(f"Model has {n_params} trainable parameters")
+# Linear layers have (in_features + 1) * out_features parameters
 assert n_params == 2
 ```
 
