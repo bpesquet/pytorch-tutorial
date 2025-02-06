@@ -1,8 +1,8 @@
-# PyTorch Tutorial
+# (Yet Another) PyTorch Tutorial
 
-This repository provides concise and annotated examples for learning [PyTorch](https://pytorch.org).
+This repository provides concise and annotated examples for learning the basics of [PyTorch](https://pytorch.org).
 
-> Adapted from the great but seemingly unmaintained [PyTorch Tutorial](https://github.com/yunjey/pytorch-tutorial) by [Yunjey Choi](https://yunjey.github.io/).
+> [About this project](ABOUT.md)
 
 ## Table of Contents
 
