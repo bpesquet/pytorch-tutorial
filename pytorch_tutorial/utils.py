@@ -4,6 +4,7 @@ Utility functions
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 import torch
 
 
@@ -93,23 +94,34 @@ def plot_decision_boundaries(model, x, y, title, device):
         y_mesh = model(x_mesh).detach().cpu()
         if y_mesh.shape[1] > 1:  # For multi-class problems
             y_mesh = torch.argmax(y_mesh, dim=1)
+
+            # Reshape predictions to match mesh shape
+            y_mesh = y_mesh.numpy().reshape(xx.shape)
+
+            # Create the plot
+            plt.figure()
+
+            # Plot decision boundaries
+            plt.contourf(xx, yy, y_mesh, alpha=0.4, cmap="RdYlBu")
+            plt.contour(xx, yy, y_mesh, colors="k", linewidths=0.5)
+
+            # Plot data points
+            scatter = plt.scatter(
+                x_cpu[:, 0], x_cpu[:, 1], c=y_cpu, cmap="RdYlBu", linewidth=1, alpha=0.8
+            )
         else:  # For binary classification
-            y_mesh = (y_mesh > 0).float()
+            # Reshape predictions to match mesh shape
+            y_mesh = y_mesh.numpy().reshape(xx.shape)
 
-    # Reshape predictions to match mesh shape
-    y_mesh = y_mesh.numpy().reshape(xx.shape)
+            # Create the plot
+            plt.figure()
 
-    # Create the plot
-    plt.figure()
+            # Plot decision boundary
+            plt.contourf(xx, yy, y_mesh, cmap=plt.colormaps.get_cmap("Spectral"))
 
-    # Plot decision boundaries
-    plt.contourf(xx, yy, y_mesh, alpha=0.4, cmap="RdYlBu")
-    plt.contour(xx, yy, y_mesh, colors="k", linewidths=0.5)
-
-    # # Plot data points
-    scatter = plt.scatter(
-        x_cpu[:, 0], x_cpu[:, 1], c=y_cpu, cmap="RdYlBu", linewidth=1, alpha=0.8
-    )
+            # Plot data points
+            cm_bright = ListedColormap(["#FF0000", "#0000FF"])
+            scatter = plt.scatter(x_cpu[:, 0], x_cpu[:, 1], c=y_cpu, cmap=cm_bright)
 
     # Add legend
     unique_labels = np.unique(y_cpu)
@@ -121,12 +133,13 @@ def plot_decision_boundaries(model, x, y, title, device):
             color="w",
             markerfacecolor=scatter.cmap(scatter.norm(label.item())),
             markersize=10,
-            label=f"Class {label.item()}",
+            label=f"Class {label.item():.0f}",
         )
         for label in unique_labels
     ]
     plt.legend(handles=legend_elements)
 
     plt.title(title)
+    plt.tight_layout()
 
     return plt.gcf()

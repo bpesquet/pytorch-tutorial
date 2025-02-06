@@ -2,6 +2,7 @@
 Logistic Regression with PyTorch
 """
 
+import math
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.datasets import make_blobs
@@ -27,11 +28,11 @@ def test_logistic_regression(show_plots=False):
     print(f"PyTorch {torch.__version__}, using {device} device")
 
     # Hyperparameters
-    n_samples = 1000
+    n_samples = 1000  # Number of data samples
     output_dim = 3  # Number of classes
-    n_epochs = 60
-    learning_rate = 0.001
-    batch_size = 32
+    n_epochs = 60  # Number of training iterations on the whole dataset
+    learning_rate = 0.001  # Rate of parameter change during gradient descent
+    batch_size = 32  # Number of samples used for one gradient descent step
 
     # Generate a 2D dataset with scikit-learn
     inputs, targets = make_blobs(  # pylint: disable=unbalanced-tuple-unpacking
@@ -41,15 +42,22 @@ def test_logistic_regression(show_plots=False):
         cluster_std=0.5,
         random_state=0,
     )
+    print(f"Inputs: {inputs.shape}. targets: {targets.shape}")
+    assert inputs.shape == (n_samples, 2)
+    assert targets.shape == (n_samples,)
 
     # Convert dataset to PyTorch tensors and put them on GPU memory (if available)
     x_train = torch.from_numpy(inputs).float().to(device)
     y_train = torch.from_numpy(targets).long().to(device)
 
-    # Create data loader for loading data as batches
+    # Create data loader for loading data as randomized batches
     blobs_dataloader = DataLoader(
         list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True
     )
+
+    # Number of batches in an epoch (= n_samples / batch_size, rounded up)
+    n_batches = len(blobs_dataloader)
+    assert n_batches == math.ceil(n_samples / batch_size)
 
     # Create a logistic regression model for the 2D dataset
     model = nn.Linear(in_features=2, out_features=output_dim).to(device)
@@ -73,12 +81,6 @@ def test_logistic_regression(show_plots=False):
     # Set the model to training mode - important for batch normalization and dropout layers.
     # Unnecessary here but added for best practices
     model.train()
-
-    # Number of samples
-    n_samples = len(blobs_dataloader.dataset)
-
-    # Number of batches in an epoch (= n_samples / batch_size, rounded up)
-    n_batches = len(blobs_dataloader)
 
     # Train the model
     for epoch in range(n_epochs):

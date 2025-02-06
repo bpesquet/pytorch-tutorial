@@ -1,4 +1,4 @@
-# (Yet Another) PyTorch Tutorial
+# (Yet another) PyTorch Tutorial
 
 This repository provides concise and annotated examples for learning the basics of [PyTorch](https://pytorch.org).
 

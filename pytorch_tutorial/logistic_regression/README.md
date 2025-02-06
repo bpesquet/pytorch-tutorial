@@ -24,6 +24,7 @@ This example trains a Logistic Regression classifier (equivalent to a feedforwar
 As usual, we start by importing the necessary packages.
 
 ```python
+import math
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -35,7 +36,7 @@ from torch.utils.data import DataLoader
 
 ## GPU support
 
-> The `get_device()` function was defined in a [previous example](../fundamentals/README.md#gpu-support)
+> The `get_device()` utility function was defined in a [previous example](../fundamentals/README.md#gpu-support)
 
 ```python
 device = get_device()
@@ -48,11 +49,11 @@ Feel free to choose different values and check their impact on the training outc
 
 ```python
 # Hyperparameters
-n_samples = 1000
+n_samples = 1000  # Number of data samples
 output_dim = 3  # Number of classes
-n_epochs = 60
-learning_rate = 0.001
-batch_size = 32
+n_epochs = 60  # Number of training iterations on the whole dataset
+learning_rate = 0.001  # Rate of parameter change during gradient descent
+batch_size = 32  # Number of samples used for one gradient descent step
 ```
 
 ## Data generation
@@ -68,6 +69,9 @@ inputs, targets = make_blobs(
     cluster_std=0.5,
     random_state=0,
 )
+print(f"Inputs: {inputs.shape}. targets: {targets.shape}")
+assert inputs.shape == (n_samples, 2)
+assert targets.shape == (n_samples,)
 ```
 
 ## Dataset loading
@@ -81,10 +85,14 @@ The PyTorch [DataLoader](https://pytorch.org/docs/stable/data.html#torch.utils.d
 x_train = torch.from_numpy(inputs).float().to(device)
 y_train = torch.from_numpy(targets).int().to(device)
 
-# Create data loader for loading data as batches
+# Create data loader for loading data as randomized batches
 blobs_dataloader = DataLoader(
     list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True
 )
+
+# Number of batches in an epoch (= n_samples / batch_size, rounded up)
+n_batches = len(blobs_dataloader)
+assert n_batches == math.ceil(n_samples / batch_size)
 ```
 
 ## Model definition
@@ -102,7 +110,7 @@ model = nn.Linear(in_features=2, out_features=output_dim).to(device)
 
 The number of parameters for this model is equal to the number of entries multiplied by the number of classes. We must take into account the bias (entry always equal to 1).
 
-> The `get_parameter_count()` function was defined in a [previous example](../linear_regression/README.md#parameter-count).
+> The `get_parameter_count()` utility function was defined in a [previous example](../linear_regression/README.md#parameter-count).
 
 ```python
 # Print model architecture
@@ -140,25 +148,17 @@ optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
 ## Training loop
 
-After defining some utility variables (see below), we implement the canonical PyTorch training loop.
+We now implement the canonical PyTorch training loop.
 
-Contrary to the [previous example](../linear_regression/README.md#training-loop), we load data as batches rather than using the whole dataset at each step of the gradient descent process (which would be resource-inefficient and is never used in practice).
+Contrary to the [previous example](../linear_regression/README.md#training-loop), we load data as batches rather than using the whole dataset at each step of the gradient descent process. The latter would be resource-inefficient and is never used in practice.
+
+---
 
 ```python
 # Set the model to training mode - important for batch normalization and dropout layers.
 # Unnecessary here but added for best practices
 model.train()
 
-# Number of samples
-n_samples = len(blobs_dataloader.dataset)
-
-# Number of batches in an epoch (= n_samples / batch_size, rounded up)
-n_batches = len(blobs_dataloader)
-```
-
----
-
-```python
 # Train the model
 for epoch in range(n_epochs):
     # Total loss for epoch, divided by number of batches to obtain mean loss
@@ -201,7 +201,7 @@ for epoch in range(n_epochs):
 
 Finally, we plot the data and decision boundaries (model prediction for each region of the 2D plane) for this example.
 
-> The `plot_decision_boundaries()` function is defined below.
+> The `plot_decision_boundaries()` utility function is defined below.
 
 ```python
 # Improve plots appearance
@@ -248,30 +248,41 @@ def plot_decision_boundaries(model, x, y, title, device):
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 
     # Convert mesh to PyTorch tensors and put it on device memory
-    x_mesh = torch.FloatTensor(np.c_[xx.ravel(), yy.ravel()]).to(device)
+    x_mesh = torch.tensor(np.c_[xx.ravel(), yy.ravel()], dtype=torch.float).to(device)
 
     # Get predictions for mesh points
     with torch.no_grad():
         y_mesh = model(x_mesh).detach().cpu()
         if y_mesh.shape[1] > 1:  # For multi-class problems
             y_mesh = torch.argmax(y_mesh, dim=1)
+
+            # Reshape predictions to match mesh shape
+            y_mesh = y_mesh.numpy().reshape(xx.shape)
+
+            # Create the plot
+            plt.figure()
+
+            # Plot decision boundaries
+            plt.contourf(xx, yy, y_mesh, alpha=0.4, cmap="RdYlBu")
+            plt.contour(xx, yy, y_mesh, colors="k", linewidths=0.5)
+
+            # Plot data points
+            scatter = plt.scatter(
+                x_cpu[:, 0], x_cpu[:, 1], c=y_cpu, cmap="RdYlBu", linewidth=1, alpha=0.8
+            )
         else:  # For binary classification
-            y_mesh = (y_mesh > 0).float()
+            # Reshape predictions to match mesh shape
+            y_mesh = y_mesh.numpy().reshape(xx.shape)
 
-    # Reshape predictions to match mesh shape
-    y_mesh = y_mesh.numpy().reshape(xx.shape)
+            # Create the plot
+            plt.figure()
 
-    # Create the plot
-    plt.figure()
+            # Plot decision boundary
+            plt.contourf(xx, yy, y_mesh, cmap=plt.colormaps.get_cmap("Spectral"))
 
-    # Plot decision boundaries
-    plt.contourf(xx, yy, y_mesh, alpha=0.4, cmap="RdYlBu")
-    plt.contour(xx, yy, y_mesh, colors="k", linewidths=0.5)
-
-    # # Plot data points
-    scatter = plt.scatter(
-        x_cpu[:, 0], x_cpu[:, 1], c=y_cpu, cmap="RdYlBu", linewidth=1, alpha=0.8
-    )
+            # Plot data points
+            cm_bright = ListedColormap(["#FF0000", "#0000FF"])
+            scatter = plt.scatter(x_cpu[:, 0], x_cpu[:, 1], c=y_cpu, cmap=cm_bright)
 
     # Add legend
     unique_labels = np.unique(y_cpu)
@@ -283,13 +294,14 @@ def plot_decision_boundaries(model, x, y, title, device):
             color="w",
             markerfacecolor=scatter.cmap(scatter.norm(label.item())),
             markersize=10,
-            label=f"Class {label.item()}",
+            label=f"Class {label.item():.0f}",
         )
         for label in unique_labels
     ]
     plt.legend(handles=legend_elements)
 
     plt.title(title)
+    plt.tight_layout()
 
     return plt.gcf()
 ```

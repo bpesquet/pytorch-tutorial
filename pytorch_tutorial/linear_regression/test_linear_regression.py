@@ -26,10 +26,10 @@ def test_linear_regression(show_plots=False):
     print(f"PyTorch {torch.__version__}, using {device} device")
 
     # Hyperparameters
-    n_epochs = 60
-    learning_rate = 0.001
+    n_epochs = 60  # Number of training iterations on the whole dataset
+    learning_rate = 0.001  # Rate of parameter change during gradient descent
 
-    # Toy dataset: inputs
+    # Toy dataset: inputs and expected results
     inputs = np.array(
         [
             [3.3],
@@ -50,8 +50,6 @@ def test_linear_regression(show_plots=False):
         ],
         dtype=np.float32,
     )
-
-    # Toy dataset: expected results
     targets = np.array(
         [
             [1.7],
@@ -72,6 +70,8 @@ def test_linear_regression(show_plots=False):
         ],
         dtype=np.float32,
     )
+
+    print(f"Inputs: {inputs.shape}. targets: {targets.shape}")
 
     # Convert dataset to PyTorch tensors and put them on GPU memory (if available)
     x_train = torch.from_numpy(inputs).to(device)

@@ -35,7 +35,7 @@ from torch import nn
 
 Let's probe for the availability of an accelerated device.
 
-> The `get_device()` function was defined in a [previous example](../fundamentals/README.md#gpu-support)
+> The `get_device()` utility function was defined in a [previous example](../fundamentals/README.md#gpu-support)
 
 ```python
 device = get_device()
@@ -48,18 +48,18 @@ Next, we define the various hyperparameters for this example.
 
 ```python
 # Hyperparameters
-n_epochs = 60
-learning_rate = 0.001
+n_epochs = 60  # Number of training iterations on the whole dataset
+learning_rate = 0.001  # Rate of parameter change during gradient descent
 ```
 
 ## Dataset loading
 
 To keep things as simple as possible, the dataset is created from scratch as two NumPy arrays: `ìnputs` (x-coordinates of the samples) and `targets` (corresponding y-coordinates of the samples).
 
-### Inputs
+### Inputs and targets
 
 ```python
-# Toy dataset: inputs
+# Toy dataset: inputs and expected results
 inputs = np.array(
 [
     [3.3],  [4.4], [5.5], [6.71], [6.93], [4.168], [9.779], [6.182],
@@ -67,12 +67,6 @@ inputs = np.array(
 ],
 dtype=np.float32,
 )
-```
-
-### Targets
-
-```python
-# Toy dataset: expected results
 targets = np.array(
 [
     [1.7], [2.76], [2.09], [3.19], [1.694], [1.573], [3.366], [2.596],
@@ -80,6 +74,8 @@ targets = np.array(
 ],
 dtype=np.float32,
 )
+
+print(f"Inputs: {inputs.shape}. targets: {targets.shape}")
 ```
 
 ### Tensors creation
@@ -189,7 +185,7 @@ for epoch in range(n_epochs):
 
 Finally, model predictions (fitted line) are plotted alongside training data.
 
-> The `plot_training_result()` function is defined below.
+> The `plot_training_result()` utility function is defined below.
 
 ```python
 # Improve plots appearance
