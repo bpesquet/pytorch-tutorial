@@ -6,7 +6,10 @@ max-line-length=130
 [DESIGN]
 
 # Maximum number of locals for function / method body
-max-locals = 26
+max-locals = 32
+
+# Maximum number of statements in function / method body
+max-statements = 55
 
 [MESSAGES CONTROL]
 

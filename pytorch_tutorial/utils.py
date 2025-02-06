@@ -142,3 +142,48 @@ def plot_decision_boundaries(model, x, y, title, device):
     plt.title(title)
 
     return plt.gcf()
+
+
+def plot_fashion_images(data, device, model=None):
+    """
+    Plot some images with their associated or predicted labels
+    """
+
+    # Items, i.e. fashion categories associated to images and indexed by label
+    fashion_items = (
+        "T-Shirt",
+        "Trouser",
+        "Pullover",
+        "Dress",
+        "Coat",
+        "Sandal",
+        "Shirt",
+        "Sneaker",
+        "Bag",
+        "Ankle Boot",
+    )
+
+    figure = plt.figure()
+
+    cols, rows = 5, 3
+    for i in range(1, cols * rows + 1):
+        sample_idx = torch.randint(len(data), size=(1,)).item()
+        img, label = data[sample_idx]
+        figure.add_subplot(rows, cols, i)
+
+        # Title is the fashion item associated to either ground truth or predicted label
+        if model is None:
+            title = fashion_items[label]
+        else:
+            # Add a dimension (to match expected shape with batch size) and store image on device memory
+            x_img = img[None, :].to(device)
+            # Compute predicted label for image
+            # Even if the model outputs unormalized logits, argmax gives us the predicted label
+            pred_label = model(x_img).argmax(dim=1).item()
+            title = f"{fashion_items[pred_label]}?"
+        plt.title(title)
+
+        plt.axis("off")
+        plt.imshow(img.cpu().detach().numpy().squeeze(), cmap="gray")
+
+    return plt.gcf()
