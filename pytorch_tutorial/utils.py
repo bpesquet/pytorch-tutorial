@@ -140,6 +140,5 @@ def plot_decision_boundaries(model, x, y, title, device):
     plt.legend(handles=legend_elements)
 
     plt.title(title)
-    plt.tight_layout()
 
     return plt.gcf()

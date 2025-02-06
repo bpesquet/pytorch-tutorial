@@ -9,6 +9,7 @@ This repository provides concise and annotated examples for learning the basics 
 - [Fundamentals](pytorch_tutorial/fundamentals/)
 - [Linear Regression](pytorch_tutorial/linear_regression/)
 - [Logistic Regression](pytorch_tutorial/logistic_regression/)
+- [MultiLayer Perceptron](pytorch_tutorial/multilayer_perceptron/)
 - ... (more to come)
 
 ## Usage
