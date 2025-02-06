@@ -44,7 +44,7 @@ def test_logistic_regression(show_plots=False):
 
     # Convert dataset to PyTorch tensors and put them on GPU memory (if available)
     x_train = torch.from_numpy(inputs).float().to(device)
-    y_train = torch.from_numpy(targets).int().to(device)
+    y_train = torch.from_numpy(targets).long().to(device)
 
     # Create data loader for loading data as batches
     blobs_dataloader = DataLoader(

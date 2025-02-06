@@ -18,7 +18,12 @@ def get_device():
 
 
 def get_parameter_count(model):
-    """Return the number of trainable parameters for a PyTorch model"""
+    """
+    Return the number of trainable parameters for a PyTorch model
+
+    Args:
+        model (torch.nn.Module): a PyTorch model
+    """
 
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
@@ -81,7 +86,7 @@ def plot_decision_boundaries(model, x, y, title, device):
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 
     # Convert mesh to PyTorch tensors and put it on device memory
-    x_mesh = torch.FloatTensor(np.c_[xx.ravel(), yy.ravel()]).to(device)
+    x_mesh = torch.tensor(np.c_[xx.ravel(), yy.ravel()], dtype=torch.float).to(device)
 
     # Get predictions for mesh points
     with torch.no_grad():
