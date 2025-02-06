@@ -9,7 +9,7 @@ This project aims to follow a similar path by providing a set of bare-bones, sel
 Rather than Jupyter notebooks, these examples are provided as standalone Python files for the following reasons:
 
 - it facilitates a global understanding of their structure;
-- it simplifies [formatting](https://github.com/psf/black), [linting](https://github.com/pylint-dev/pylint), [testing](https://docs.pytest.org) and [continuous integration](.github/workflows/ci.yaml);
+- it simplifies [formatting](https://github.com/psf/black), [linting](https://github.com/pylint-dev/pylint), [testing](https://docs.pytest.org), [versioning](https://github.com/bpesquet/pytorch-tutorial/commits/main/) and [continuous integration](.github/workflows/ci.yaml);
 - it promotes concision and general code quality.
 
 All examples are heavily commented and accompanied by `README` files for an easier follow-through.
