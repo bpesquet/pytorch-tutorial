@@ -66,14 +66,14 @@ DATA_DIR = "./_output"
 # Download and construct the Fashion-MNIST images dataset
 # The training set is used to train the model
 train_dataset = datasets.FashionMNIST(
-    root=f"DATA_DIR",
+    root=DATA_DIR,
     train=True,  # Training set
     download=True,
     transform=transforms.ToTensor(),
 )
 # The test set is used to evaluate the trained model performance on unseen data
 test_dataset = datasets.FashionMNIST(
-    root=f"DATA_DIR",
+    root=DATA_DIR,
     train=False,  # Test set
     download=True,
     transform=transforms.ToTensor(),
@@ -111,14 +111,14 @@ print(f"{n_train_samples} training samples, {n_test_samples} test samples")
 
 ### PyTorch models as classes
 
-Non-trivial PyTorch models are created as subclasses of the [Module]() class. Two elements must be included into a model class:
+Most non-trivial PyTorch models are created as subclasses of the [Module](https://pytorch.org/docs/stable/generated/torch.nn.Module.html) class. Two elements must be included into a model class:
 
 - the constructor (`__init__()` function) to define the model architecture;
 - the `forward()` function to implement the forward pass of input data through the model.
 
 ### Model architecture
 
-We design a basic convolutional network. It takes a tensor of shape `(1, 28, 28)` (a rescaled grayscale image) as input and applies 2D convolution and max-pooling operations to detect interesting features. The output of these operations is flattened into a vector of shape and passes through two linear layers to compute 10 values, one for each possible class.
+We design a basic convolutional network. It takes a tensor of shape `(1, 28, 28)` (a rescaled grayscale image) as input and applies 2D convolution and max-pooling operations to detect interesting features. The output of these operations is flattened into a vector and passes through two linear layers (also called *dense* of *fully connected* layers) to compute 10 values, one for each possible class.
 
 ![Fashion-MNIST convet architecture](images/fashionnet.png)
 
