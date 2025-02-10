@@ -15,7 +15,7 @@ math: true  # Use default Marp engine for math rendering
 
 ## Scope and objective
 
-This example trains a MultiLayer Perceptron (a feedforward neural network with one hidden layer) to classify 2D data. The complete sourse code is available [here](test_multilayer_perceptron.py).
+This example trains a MultiLayer Perceptron (a feedforward neural network with one hidden layer) to classify 2D data. It is designed to mimic the experience of the [TensorFlow Playground](https://playground.tensorflow.org/#activation=tanh&batchSize=5&dataset=circle&regDataset=reg-plane&learningRate=0.1&regularizationRate=0&noise=0&networkShape=3&seed=0.94779&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false)). The complete sourse code is available [here](test_multilayer_perceptron.py).
 
 ![Training outcome](images/multilayer_perceptron.png)
 
@@ -105,7 +105,11 @@ assert n_batches == math.ceil(n_samples / batch_size)
 
 ## Model definition
 
-A PyTorch model is defined by combining elementary blocks, known as *modules*. Here, we use the [Sequential](https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html) class as a container for these blocks. Its ouput is a scalar value squashed into the $[0,1]$ range by the [Sigmoid](<https://pytorch.org/docs/stable/generated/torch.nn.Sigmoid.html>) activation function.
+A PyTorch model is defined by combining elementary blocks, known as *modules*.
+
+Here, we use the [Sequential](https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html) class as a container of [Linear](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html) layers. The model ouput is a scalar value squashed into the $[0,1]$ range by the [Sigmoid](<https://pytorch.org/docs/stable/generated/torch.nn.Sigmoid.html>) activation function.
+
+### Model implementation
 
 ```python
 # Create a MultiLayer Perceptron with 2 inputs, a hidden layer and 1 output
@@ -119,6 +123,9 @@ model = nn.Sequential(
     # Activation function for the output layer
     nn.Sigmoid(),
 ).to(device)
+
+# Print model architecture
+print(model)
 ```
 
 ### Parameter count
@@ -128,9 +135,6 @@ The total number of parameters for this model is obtained by summing the paramet
 > The `get_parameter_count()` utility function was defined in a [previous example](../linear_regression/README.md#parameter-count).
 
 ```python
-# Print model architecture
-print(model)
-
 # Compute and print parameter count
 n_params = get_parameter_count(model)
 print(f"Model has {n_params} trainable parameters")

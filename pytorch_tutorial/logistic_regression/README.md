@@ -109,6 +109,9 @@ This model has two inputs (the x- and y-coordinates of a sample) and as many out
 ```python
 # Create a logistic regression model for the 2D dataset
 model = nn.Linear(in_features=2, out_features=output_dim).to(device)
+
+# Print model architecture
+print(model)
 ```
 
 ### Parameter count
@@ -118,9 +121,6 @@ The number of parameters for this model is equal to the number of entries multip
 > The `get_parameter_count()` utility function was defined in a [previous example](../linear_regression/README.md#parameter-count).
 
 ```python
-# Print model architecture
-print(model)
-
 # Compute and print parameter count
 n_params = get_parameter_count(model)
 print(f"Model has {n_params} trainable parameters")
