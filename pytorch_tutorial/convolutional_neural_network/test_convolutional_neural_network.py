@@ -21,30 +21,28 @@ DATA_DIR = "./_output"
 class Convnet(nn.Module):
     """Convnet for fashion articles classification"""
 
-    def __init__(self, n_classes=10):
+    def __init__(self, conv2d_kernel_size=3):
         super().__init__()
 
         # Define a sequential stack of layers
         self.layer_stack = nn.Sequential(
-            # 2D convolution, output shape: (batch_zize, 32, 26, 26) with Fashion-MNIST images
+            # 2D convolution, output shape: (batch_zize, out_channels, output_dim, output_dim)
             # Without padding, output_dim = (input_dim - kernel_size + 1) / stride
-            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3),
+            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=conv2d_kernel_size),
             nn.ReLU(),
-            # Max pooling, output shape: (batch_zize, 32, 13, 13) with Fashion-MNIST images
+            # Max pooling, output shape: (batch_zize, out_channels, input_dim // kernel_size, input_dim // kernel_size)
             nn.MaxPool2d(kernel_size=2),
-            # 2D convolution, output shape: (batch_zize, 64, 11, 11) with Fashion-MNIST images
-            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3),
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=conv2d_kernel_size),
             nn.ReLU(),
-            # Max pooling, output shape: (batch_zize, 64, 5, 5) with Fashion-MNIST images
             nn.MaxPool2d(kernel_size=2),
-            # Flattening layer, output shape: (batch_zize, 64x5x5 = 1600) with Fashion-MNIST images
+            # Flattening layer, output shape: (batch_zize, out_channels * output_dim * output_dim)
             nn.Flatten(),
             # Linear layer whose input features are inferred during the first call to forward(). Output shape: (batch_zize, 128).
             # This avoids hardcoding the output shape of the previous layer, which depends on the shape of input images
             nn.LazyLinear(out_features=128),
             nn.ReLU(),
             # Output shape: (batch_size, 10)
-            nn.Linear(in_features=128, out_features=n_classes),
+            nn.Linear(in_features=128, out_features=10),
         )
 
     def forward(self, x):
@@ -67,22 +65,23 @@ def test_convolutional_neural_network(show_plots=False):
     print(f"PyTorch {torch.__version__}, using {device} device")
 
     # Hyperparameters
-    n_epochs = 10
-    learning_rate = 0.001
-    batch_size = 64
+    n_epochs = 10  # Number of training iterations on the whole dataset
+    learning_rate = 0.001  # Rate of parameter change during gradient descent
+    batch_size = 64  # Number of samples used for one gradient descent step
+    conv2d_kernel_size = 3  # Size of the 2D convolution kernels
 
     # Download and construct the Fashion-MNIST images dataset
     # The training set is used to train the model
     train_dataset = datasets.FashionMNIST(
-        root=f"{DATA_DIR}",
-        train=True,
+        root=DATA_DIR,
+        train=True,  # Training set
         download=True,
         transform=transforms.ToTensor(),
     )
     # The test set is used to evaluate the trained model performance on unseen data
     test_dataset = datasets.FashionMNIST(
-        root=f"{DATA_DIR}",
-        train=False,
+        root=DATA_DIR,
+        train=False,  # Test set
         download=True,
         transform=transforms.ToTensor(),
     )
@@ -93,7 +92,6 @@ def test_convolutional_neural_network(show_plots=False):
     )
     # Number of training samples
     n_train_samples = len(train_dataloader.dataset)
-
     # Number of batches in an epoch (= n_train_samples / batch_size, rounded up)
     n_batches = len(train_dataloader)
     assert n_batches == math.ceil(n_train_samples / batch_size)
@@ -108,7 +106,7 @@ def test_convolutional_neural_network(show_plots=False):
     print(f"{n_train_samples} training samples, {n_test_samples} test samples")
 
     # Create the convolutional network
-    model = Convnet().to(device)
+    model = Convnet(conv2d_kernel_size=conv2d_kernel_size).to(device)
 
     # Use the first training image as dummy to initialize the LazyLinear layer.
     # This is mandatory to count model parameters (see below)
@@ -123,17 +121,8 @@ def test_convolutional_neural_network(show_plots=False):
     # Compute and print parameter count
     n_params = get_parameter_count(model)
     print(f"Model has {n_params} trainable parameters")
-    # Conv2d layers have (in_channels * kernel_size * kernel_size + 1) * out_channels parameters
-    # Linear layers have (in_features + 1) * out_features parameters.
-    # The following values must be changed if the model architecture is modified
-    n_params_cond2d1 = (1 * 3 * 3 + 1) * 32
-    n_params_cond2d2 = (32 * 3 * 3 + 1) * 64
-    n_params_linear1 = (64 * 5 * 5 + 1) * 128
-    n_params_linear2 = (128 + 1) * 10
-    assert (
-        n_params
-        == n_params_cond2d1 + n_params_cond2d2 + n_params_linear1 + n_params_linear2
-    )
+    # Check parameter count in a dedicated function to keep main code simple
+    check_parameter_count(n_params=n_params, conv2d_kernel_size=conv2d_kernel_size)
 
     # Use cross-entropy loss function.
     # nn.CrossEntropyLoss computes softmax internally
@@ -206,6 +195,37 @@ def test_convolutional_neural_network(show_plots=False):
         # Plot several test images and their associated predictions
         _ = plot_fashion_images(data=test_dataset, device=device, model=model)
         plt.show()
+
+
+def check_parameter_count(n_params, conv2d_kernel_size):
+    """
+    Check the number of parameters of a model
+    """
+
+    # Conv2d layers have (in_channels * kernel_size * kernel_size + 1) * out_channels parameters
+    n_params_cond2d1 = (1 * conv2d_kernel_size * conv2d_kernel_size + 1) * 32
+    n_params_cond2d2 = (32 * conv2d_kernel_size * conv2d_kernel_size + 1) * 64
+
+    # Max-pooling layers have zero parameters
+
+    # Linear layers have (in_features + 1) * out_features parameters.
+    # To compute in_features for the first linear layer, we have to infer the output shapes of the previous layers.
+    conv2d1_output_dim = 28 - conv2d_kernel_size + 1  # 2D cnvolution with no padding
+    maxpool1_output_dim = conv2d1_output_dim // 2  # Max-pooling with a kernel of size 2
+    conv2d2_output_dim = (
+        maxpool1_output_dim - conv2d_kernel_size + 1
+    )  # 2D cnvolution with no padding
+    maxpool2_output_dim = conv2d2_output_dim // 2  # 2D cnvolution with no padding
+    # Output shape for the second max-pooling layer: (batch_size, 64, maxpool2_output_dim, maxpool2_output_dim)
+    # Output shape for the flattening layer: (batch_size, 64 * maxpool2_output_dim * maxpool2_output_dim)
+    n_params_linear1 = (64 * maxpool2_output_dim * maxpool2_output_dim + 1) * 128
+
+    n_params_linear2 = (128 + 1) * 10
+
+    assert (
+        n_params
+        == n_params_cond2d1 + n_params_cond2d2 + n_params_linear1 + n_params_linear2
+    )
 
 
 # Standalone execution

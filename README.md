@@ -10,6 +10,7 @@ This repository provides concise and annotated examples for learning the basics 
 - [Linear Regression](pytorch_tutorial/linear_regression/)
 - [Logistic Regression](pytorch_tutorial/logistic_regression/)
 - [MultiLayer Perceptron](pytorch_tutorial/multilayer_perceptron/)
+- [Convolutional Neural Network](pytorch_tutorial/convolutional_neural_network/)
 - ... (more to come)
 
 ## Usage
