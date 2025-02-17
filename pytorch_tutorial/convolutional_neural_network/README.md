@@ -51,9 +51,9 @@ conv2d_kernel_size = 3  # Size of the 2D convolution kernels
 
 ## Dataset loading
 
-We use [Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist), a classic dataset for image recognition. Each example is a 28x28 grayscale image, associated with one label from 10 classes: t-shirt, trouser, pullover...
+We use [Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist), a classic dataset for image recognition. Each example is a 28x28 grayscale image,  associated with a label (fashion category) from 10 possible classes: t-shirt, trouser, pullover...
 
-This dataset is provided py PyTorch through the [FashionMNIST](https://pytorch.org/vision/0.19/generated/torchvision.datasets.FashionMNIST.html) class. In order to evaluate the trained model performance on unseen data, this class splits the data into training and test sets.
+This dataset is provided by PyTorch through the [FashionMNIST](https://pytorch.org/vision/0.19/generated/torchvision.datasets.FashionMNIST.html) class. In order to evaluate the trained model performance on unseen data, this class lets us download either the training set (60,000 images) or the test set (10,000 images).
 
 Alongside download, a [transform](https://pytorch.org/vision/main/transforms.html) operation is applied to turn images into PyTorch tensors of shape `(color_depth, height, width)`, with pixel values scaled to the $[0,1]$ range.
 
@@ -115,6 +115,8 @@ Most non-trivial PyTorch models are created as subclasses of the [Module](https:
 
 - the constructor (`__init__()` function) to define the model architecture;
 - the `forward()` function to implement the forward pass of input data through the model.
+
+This is all PyTorch needs to compute gradients thanks to its [autodifferentiation engine](../fundamentals/README.md#autodifferentiation).
 
 ### Model architecture
 
