@@ -192,7 +192,7 @@ PyTorch offers out-of-the-box support for [CUDA](https://developer.nvidia.com/cu
 
 ### Initializing a device
 
-To avoid code duplication, we define the detection code in its own function that we'll reuse in other examples.
+To avoid code duplication, we define the device detection code in its own function that we'll reuse in other examples.
 
 ```python
 def get_device():
@@ -201,7 +201,9 @@ def get_device():
     return torch.device(
         "cuda"
         if torch.cuda.is_available()
-        else "mps" if torch.backends.mps.is_available() else "cpu"
+        else "mps"
+        if torch.backends.mps.is_available()
+        else "cpu"
     )
 
 
