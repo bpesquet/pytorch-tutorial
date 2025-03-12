@@ -27,6 +27,7 @@ This [example](test_fundamentals.py) focuses on its fundamentals aspects: tensor
 
 First and foremost, we need to import [torch](https://pytorch.org/docs/stable/torch.html), the core package of PyTorch.
 
+> [!NOTE]
 > Depending on your context, the library may already be available on your system and ready to be imported. For example, this is the case in most cloud-based notebook execution platforms like [Google Colaboratory](https://colab.research.google.com/). Refer to its [documentation](https://pytorch.org/get-started/locally/) if you need to install PyTorch on your local environment.
 
 ```python
@@ -40,6 +41,7 @@ import torch
 
 This example also uses several additional libraries that you must import using the following code.
 
+> [!NOTE]
 > You might need to install the [scikit-learn](https://scikit-learn.org) and [torchvision](https://pytorch.org/vision/stable/index.html) packages beforehand.
 
 ```python
@@ -71,6 +73,7 @@ They can be created in various ways. Here are some examples.
 
 ---
 
+> [!NOTE]
 > The [assert](https://docs.python.org/3/reference/simple_stmts.html#grammar-token-python-grammar-assert_stmt) statements are used to check (and also illustrate) the expected results of previous statements.
 
 ```python
@@ -159,6 +162,7 @@ assert x.reshape(3, -1).shape == torch.Size([3, 5])
 
 Tensors can be created from NumPy arrays, and vice-versa.
 
+> [!CAUTION]
 > Tensors stored on the CPU memory and NumPy arrays can share their underlying memory locations. Changing one will change the other.
 
 ---
@@ -312,7 +316,8 @@ Backwards traversal computes the gradients for each operation, accumulates them 
 
 ![Backward traversal of the DAG](images/autodiff_backward_pass.png)
 
-> The mathematical details of the backward pass are detailed [here](https://github.com/bpesquet/mlcourse/tree/main/lectures/gradient_descent#step-2-backward-pass).
+> [!NOTE]
+> Learn more about [mathematical details of the backward pass](https://github.com/bpesquet/mlcourse/tree/main/lectures/gradient_descent#step-2-backward-pass).
 
 ---
 
@@ -432,7 +437,8 @@ assert n_batches == math.ceil(n_samples / batch_size)
 
 Lastly, PyTorch makes it possible to load custom datasets via the creation of a dedicated class that must implement three functions: `__init__`, `__len__`, and `__getitem__`.
 
-> See [here](https://pytorch.org/tutorials/beginner/basics/data_tutorial.html#creating-a-custom-dataset-for-your-files) for an example implementation of a custom dataset.
+> [!TIP]
+> Learn more about [creating a custom Dataset class](https://pytorch.org/tutorials/beginner/basics/data_tutorial.html#creating-a-custom-dataset-for-your-files).
 
 ```python
 class CustomDataset(Dataset):

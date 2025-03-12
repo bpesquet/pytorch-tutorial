@@ -36,6 +36,7 @@ from torch.utils.data import DataLoader
 
 ## GPU support
 
+> [!NOTE]
 > The `get_device()` utility function was defined in a [previous example](../fundamentals/README.md#gpu-support)
 
 ```python
@@ -132,6 +133,7 @@ print(model)
 
 The total number of parameters for this model is obtained by summing the parameter counts for the hidden and output layers.
 
+> [!NOTE]
 > The `get_parameter_count()` utility function was defined in a [previous example](../linear_regression/README.md#parameter-count).
 
 ```python
@@ -217,6 +219,7 @@ for epoch in range(n_epochs):
 
 After training, we plot the data and decision boundary.
 
+> [!NOTE]
 > The `plot_decision_boundaries()` utility function was defined in a [previous example](../logistic_regression/README.md#results-plotting).
 
 ```python

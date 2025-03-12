@@ -32,6 +32,7 @@ from torchvision import datasets, transforms
 
 ## GPU support
 
+> [!NOTE]
 > The `get_device()` utility function was defined in a [previous example](../fundamentals/README.md#gpu-support)
 
 ```python
@@ -231,6 +232,7 @@ assert (
 
 For this multiclass classification task, we use the [CrossEntropyLoss](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html) class.
 
+> [!NOTE]
 > As seen in a [previous example](../logistic_regression/README.md#loss-function), this class uses a softmax operation to output a probability distribution before computing the loss value.
 
 ```python
@@ -322,6 +324,7 @@ with torch.no_grad():
 
 Lastly, we may plot several test images and the associated class predictions.
 
+> [!NOTE]
 > The `plot_fashion_images()` utility function is defined below.
 
 ```python

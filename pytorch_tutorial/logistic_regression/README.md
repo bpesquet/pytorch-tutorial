@@ -35,6 +35,7 @@ from torch.utils.data import DataLoader
 
 ## GPU support
 
+> [!NOTE]
 > The `get_device()` utility function was defined in a [previous example](../fundamentals/README.md#gpu-support)
 
 ```python
@@ -118,6 +119,7 @@ print(model)
 
 The number of parameters for this model is equal to the number of entries multiplied by the number of classes. We must take into account the biases (additional entries always equal to 1).
 
+> [!NOTE]
 > The `get_parameter_count()` utility function was defined in a [previous example](../linear_regression/README.md#parameter-count).
 
 ```python
@@ -132,6 +134,7 @@ assert n_params == 3 * output_dim
 
 This classification example uses the [cross-entropy](https://github.com/bpesquet/mlcourse/tree/main/lectures/classification_performance#assessing-performance-during-training-1) a.k.a. negative log-likelihood loss function, implemented by the [CrossEntropyLoss](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html) class.
 
+> [!NOTE]
 > PyTorch also offers the [NLLLoss](https://pytorch.org/docs/stable/generated/torch.nn.NLLLoss.html#torch.nn.NLLLoss) class implementing the negative log-likelihood loss. A key difference is that `CrossEntropyLoss` expects *logits*  (raw, unnormalized predictions) as inputs, and uses [LogSoftmax](https://pytorch.org/docs/stable/generated/torch.nn.LogSoftmax.html#torch.nn.LogSoftmax) to transform them into probabilities before computing its output. Using `CrossEntropyLoss` is equivalent to applying `LogSoftmax` followed by `NLLLoss` ([more details](https://towardsdatascience.com/cross-entropy-negative-log-likelihood-and-all-that-jazz-47a95bd2e81)).
 
 ```python
@@ -206,6 +209,7 @@ for epoch in range(n_epochs):
 
 Finally, we plot the data and decision boundaries (model prediction for each region of the 2D plane) for this example.
 
+> [!NOTE]
 > The `plot_decision_boundaries()` utility function is defined below.
 
 ```python

@@ -35,7 +35,8 @@ from torch import nn
 
 Let's probe for the availability of an accelerated device.
 
-> The `get_device()` utility function was defined in a [previous example](../fundamentals/README.md#gpu-support)
+> [!NOTE]
+> The `get_device()` utility function was defined in a [previous example](../fundamentals/README.md#gpu-support).
 
 ```python
 device = get_device()
@@ -188,6 +189,7 @@ for epoch in range(n_epochs):
 
 Finally, model predictions (fitted line) are plotted alongside training data.
 
+> [!NOTE]
 > The `plot_training_result()` utility function is defined below.
 
 ```python
