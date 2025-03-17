@@ -81,7 +81,7 @@ test_dataset = datasets.FashionMNIST(
 )
 ```
 
-### Bacth loading: training set
+### Batch loading: training set
 
 ```python
 # Create data loader for loading training data as randomized batches
@@ -95,7 +95,7 @@ n_batches = len(train_dataloader)
 assert n_batches == math.ceil(n_train_samples / batch_size)
 ```
 
-### Bacth loading: test set
+### Batch loading: test set
 
 ```python
 # Create data loader for loading test data as randomized batches

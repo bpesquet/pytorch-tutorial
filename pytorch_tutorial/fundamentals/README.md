@@ -317,7 +317,7 @@ Backwards traversal computes the gradients for each operation, accumulates them 
 ![Backward traversal of the DAG](images/autodiff_backward_pass.png)
 
 > [!NOTE]
-> Learn more about [mathematical details of the backward pass](https://github.com/bpesquet/mlcourse/tree/main/lectures/gradient_descent#step-2-backward-pass).
+> Learn more about [mathematical details for this backward pass](https://github.com/bpesquet/mlcourse/tree/main/lectures/gradient_descent#step-2-backward-pass).
 
 ---
 
@@ -435,10 +435,7 @@ assert n_batches == math.ceil(n_samples / batch_size)
 
 ### Using a custom dataset
 
-Lastly, PyTorch makes it possible to load custom datasets via the creation of a dedicated class that must implement three functions: `__init__`, `__len__`, and `__getitem__`.
-
-> [!TIP]
-> Learn more about [creating a custom Dataset class](https://pytorch.org/tutorials/beginner/basics/data_tutorial.html#creating-a-custom-dataset-for-your-files).
+Lastly, PyTorch makes it possible to load custom datasets via the creation of a dedicated class inheriting from [Dataset](https://pytorch.org/docs/stable/data.html#torch.utils.data.Dataset) that must implement three functions: `__init__`, `__len__`, and `__getitem__`.
 
 ```python
 class CustomDataset(Dataset):
@@ -466,6 +463,9 @@ custom_dataloader = DataLoader(dataset=custom_dataset,
 
 # ... (Use dataloader for batched access to data)
 ```
+
+> [!TIP]
+> Learn more about [creating a custom Dataset class](https://pytorch.org/tutorials/beginner/basics/data_tutorial.html#creating-a-custom-dataset-for-your-files).
 
 ## Model loading and saving
 

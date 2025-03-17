@@ -172,8 +172,10 @@ def plot_fashion_images(data, device, model=None):
         sample_idx = torch.randint(len(data), size=(1,)).item()
         img, label = data[sample_idx]
         figure.add_subplot(rows, cols, i)
+        plt.axis("off")
+        plt.imshow(img.cpu().detach().numpy().squeeze(), cmap="gray")
 
-        # Title is the fashion item associated to either ground truth or predicted label
+        # Title is either the true or predicted fashion item
         if model is None:
             title = fashion_items[label]
         else:
@@ -184,8 +186,5 @@ def plot_fashion_images(data, device, model=None):
             pred_label = model(x_img).argmax(dim=1).item()
             title = f"{fashion_items[pred_label]}?"
         plt.title(title)
-
-        plt.axis("off")
-        plt.imshow(img.cpu().detach().numpy().squeeze(), cmap="gray")
 
     return plt.gcf()
