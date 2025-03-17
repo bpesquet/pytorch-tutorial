@@ -1,5 +1,5 @@
 """
-MultiLayer Perceptron (MLP) a.k.a. Feedforward Neural Network 
+MultiLayer Perceptron (MLP) a.k.a. Feedforward Neural Network
 """
 
 import math
@@ -52,12 +52,12 @@ def test_multilayer_perceptron(show_plots=False):
     assert y_train.shape == torch.Size([n_samples, 1])
 
     # Create data loader for loading data as randomized batches
-    circles_dataloader = DataLoader(
+    train_dataloader = DataLoader(
         list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True
     )
 
     # Number of batches in an epoch (= n_samples / batch_size, rounded up)
-    n_batches = len(circles_dataloader)
+    n_batches = len(train_dataloader)
     assert n_batches == math.ceil(n_samples / batch_size)
 
     # Create a MultiLayer Perceptron with 2 inputs, a hidden layer and 1 output
@@ -83,7 +83,7 @@ def test_multilayer_perceptron(show_plots=False):
     # Output layer has (hidden_layer_dim + 1) * 1 parameters
     assert n_params == 3 * hidden_layer_dim + hidden_layer_dim + 1
 
-    # Use binary cross-entropy loss function
+    # Use binary cross-entropy loss function for this binary classification task
     criterion = nn.BCELoss()
 
     # Use a vanilla mini-batch stochastic gradient descent optimizer
@@ -102,7 +102,7 @@ def test_multilayer_perceptron(show_plots=False):
         n_correct = 0
 
         # For each batch of data
-        for x_batch, y_batch in circles_dataloader:
+        for x_batch, y_batch in train_dataloader:
             # Forward pass
             y_pred = model(x_batch)
 

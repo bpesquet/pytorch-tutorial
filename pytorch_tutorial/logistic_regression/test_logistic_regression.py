@@ -51,12 +51,12 @@ def test_logistic_regression(show_plots=False):
     y_train = torch.from_numpy(targets).long().to(device)
 
     # Create data loader for loading data as randomized batches
-    blobs_dataloader = DataLoader(
+    train_dataloader = DataLoader(
         list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True
     )
 
     # Number of batches in an epoch (= n_samples / batch_size, rounded up)
-    n_batches = len(blobs_dataloader)
+    n_batches = len(train_dataloader)
     assert n_batches == math.ceil(n_samples / batch_size)
 
     # Create a logistic regression model for the 2D dataset
@@ -71,7 +71,7 @@ def test_logistic_regression(show_plots=False):
     # Linear layers have (in_features + 1) * out_features parameters
     assert n_params == 3 * output_dim
 
-    # Use cross-entropy loss function.
+    # Use cross-entropy loss function for this multiclass classification task.
     # Softmax is computed internally to convert outputs into probabilities
     criterion = nn.CrossEntropyLoss()
 
@@ -91,7 +91,7 @@ def test_logistic_regression(show_plots=False):
         n_correct = 0
 
         # For each batch of data
-        for x_batch, y_batch in blobs_dataloader:
+        for x_batch, y_batch in train_dataloader:
             # Forward pass
             y_pred = model(x_batch)
 

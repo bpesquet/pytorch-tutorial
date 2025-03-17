@@ -95,12 +95,12 @@ The PyTorch [DataLoader](https://pytorch.org/docs/stable/data.html#torch.utils.d
 
 ```python
 # Create data loader for loading data as randomized batches
-circles_dataloader = DataLoader(
+train_dataloader = DataLoader(
     list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True
 )
 
 # Number of batches in an epoch (= n_samples / batch_size, rounded up)
-n_batches = len(circles_dataloader)
+n_batches = len(train_dataloader)
 assert n_batches == math.ceil(n_samples / batch_size)
 ```
 
@@ -151,7 +151,7 @@ assert n_params == 3 * hidden_layer_dim + hidden_layer_dim + 1
 For this binary classification task, we use the [binary cross-entropy](https://github.com/bpesquet/mlcourse/tree/main/lectures/classification_performance#choosing-a-loss-function) loss function, implemented bye the PyTorch [BCELoss](https://pytorch.org/docs/stable/generated/torch.nn.BCELoss.html) class.
 
 ```python
-# Use binary cross-entropy loss function
+# Use binary cross-entropy loss function for this binary classification task
 criterion = nn.BCELoss()
 ```
 
@@ -186,7 +186,7 @@ for epoch in range(n_epochs):
     n_correct = 0
 
     # For each batch of data
-    for x_batch, y_batch in circles_dataloader:
+    for x_batch, y_batch in train_dataloader:
         # Forward pass
         y_pred = model(x_batch)
 

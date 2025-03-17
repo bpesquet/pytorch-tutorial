@@ -92,12 +92,12 @@ The PyTorch [DataLoader](https://pytorch.org/docs/stable/data.html#torch.utils.d
 
 ```python
 # Create data loader for loading data as randomized batches
-blobs_dataloader = DataLoader(
+train_dataloader = DataLoader(
     list(zip(x_train, y_train)), batch_size=batch_size, shuffle=True
 )
 
 # Number of batches in an epoch (= n_samples / batch_size, rounded up)
-n_batches = len(blobs_dataloader)
+n_batches = len(train_dataloader)
 assert n_batches == math.ceil(n_samples / batch_size)
 ```
 
@@ -132,13 +132,13 @@ assert n_params == 3 * output_dim
 
 ## Loss function
 
-This classification example uses the [cross-entropy](https://github.com/bpesquet/mlcourse/tree/main/lectures/classification_performance#assessing-performance-during-training-1) a.k.a. negative log-likelihood loss function, implemented by the [CrossEntropyLoss](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html) class.
+This multiclass classification example uses the [cross-entropy](https://github.com/bpesquet/mlcourse/tree/main/lectures/classification_performance#assessing-performance-during-training-1) a.k.a. negative log-likelihood loss function, implemented by the [CrossEntropyLoss](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html) class.
 
 > [!NOTE]
 > PyTorch also offers the [NLLLoss](https://pytorch.org/docs/stable/generated/torch.nn.NLLLoss.html#torch.nn.NLLLoss) class implementing the negative log-likelihood loss. A key difference is that `CrossEntropyLoss` expects *logits*  (raw, unnormalized predictions) as inputs, and uses [LogSoftmax](https://pytorch.org/docs/stable/generated/torch.nn.LogSoftmax.html#torch.nn.LogSoftmax) to transform them into probabilities before computing its output. Using `CrossEntropyLoss` is equivalent to applying `LogSoftmax` followed by `NLLLoss` ([more details](https://towardsdatascience.com/cross-entropy-negative-log-likelihood-and-all-that-jazz-47a95bd2e81)).
 
 ```python
-# Use cross-entropy loss function.
+# Use cross-entropy loss function for this multiclass classification task.
 # Softmax is computed internally to convert outputs into probabilities
 criterion = nn.CrossEntropyLoss()
 ```
@@ -176,7 +176,7 @@ for epoch in range(n_epochs):
     n_correct = 0
 
     # For each batch of data
-    for x_batch, y_batch in blobs_dataloader:
+    for x_batch, y_batch in train_dataloader:
         # Forward pass
         y_pred = model(x_batch)
 
@@ -310,7 +310,6 @@ def plot_decision_boundaries(model, x, y, title, device):
     plt.legend(handles=legend_elements)
 
     plt.title(title)
-    plt.tight_layout()
 
     return plt.gcf()
 ```
