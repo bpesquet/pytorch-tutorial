@@ -340,14 +340,14 @@ Lastly, we may plot several test images and the associated class predictions.
 
 ```python
 # Plot several test images and their associated predictions
-_ = plot_fashion_images(data=test_dataset, device=device, model=model)
+_ = plot_fashion_images(dataset=test_dataset, device=device, model=model)
 plt.show()
 ```
 
 ---
 
 ```python
-def plot_fashion_images(data, device, model=None):
+def plot_fashion_images(dataset, device, model=None):
     """
     Plot some images with their associated or predicted labels
     """
@@ -370,11 +370,13 @@ def plot_fashion_images(data, device, model=None):
 
     cols, rows = 5, 3
     for i in range(1, cols * rows + 1):
-        sample_idx = torch.randint(len(data), size=(1,)).item()
-        img, label = data[sample_idx]
+        sample_idx = torch.randint(len(dataset), size=(1,)).item()
+        img, label = dataset[sample_idx]
         figure.add_subplot(rows, cols, i)
+        plt.axis("off")
+        plt.imshow(img.cpu().detach().numpy().squeeze(), cmap="gray")
 
-        # Title is the fashion item associated to either ground truth or predicted label
+        # Title is either the true or predicted fashion item
         if model is None:
             title = fashion_items[label]
         else:
@@ -385,9 +387,6 @@ def plot_fashion_images(data, device, model=None):
             pred_label = model(x_img).argmax(dim=1).item()
             title = f"{fashion_items[pred_label]}?"
         plt.title(title)
-
-        plt.axis("off")
-        plt.imshow(img.cpu().detach().numpy().squeeze(), cmap="gray")
 
     return plt.gcf()
 ```

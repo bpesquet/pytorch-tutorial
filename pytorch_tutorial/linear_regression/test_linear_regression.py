@@ -10,7 +10,7 @@ from torch import nn
 from pytorch_tutorial.utils import (
     get_device,
     get_parameter_count,
-    plot_training_results,
+    plot_2d_data,
 )
 
 
@@ -127,8 +127,8 @@ def test_linear_regression(show_plots=False):
         # Improve plots appearance
         sns.set_theme()
 
-        _ = plot_training_results(
-            model=model, x=x_train, y=y_train, title="Linear Regression with PyTorch"
+        _ = plot_2d_data(
+            x=x_train, y=y_train, model=model, title="Linear Regression with PyTorch"
         )
         plt.show()
 

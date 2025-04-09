@@ -196,7 +196,7 @@ Finally, model predictions (fitted line) are plotted alongside training data.
 # Improve plots appearance
 sns.set_theme()
 
-_ = plot_training_results(
+_ = plot_2d_data(
     model=model, x=x_train, y=y_train, title="Linear Regression with PyTorch"
 )
 plt.show()
@@ -205,9 +205,9 @@ plt.show()
 ---
 
 ```python
-def plot_training_results(model, x, y, title):
+def plot_2d_data(x, y, model, title):
     """
-    Plot data and model predictions.
+    Plot 2D data and model predictions.
 
     Args:
         model (torch.nn.Module): Trained PyTorch model

@@ -31,9 +31,9 @@ def get_parameter_count(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-def plot_training_results(model, x, y, title):
+def plot_2d_data(x, y, model, title):
     """
-    Plot data and model predictions.
+    Plot 2D data and model predictions.
 
     Args:
         model (torch.nn.Module): Trained PyTorch model
@@ -146,7 +146,7 @@ def plot_decision_boundaries(model, x, y, title, device):
     return plt.gcf()
 
 
-def plot_fashion_images(data, device, model=None):
+def plot_fashion_images(dataset, device, model=None):
     """
     Plot some images with their associated or predicted labels
     """
@@ -169,8 +169,8 @@ def plot_fashion_images(data, device, model=None):
 
     cols, rows = 5, 3
     for i in range(1, cols * rows + 1):
-        sample_idx = torch.randint(len(data), size=(1,)).item()
-        img, label = data[sample_idx]
+        sample_idx = torch.randint(len(dataset), size=(1,)).item()
+        img, label = dataset[sample_idx]
         figure.add_subplot(rows, cols, i)
         plt.axis("off")
         plt.imshow(img.cpu().detach().numpy().squeeze(), cmap="gray")

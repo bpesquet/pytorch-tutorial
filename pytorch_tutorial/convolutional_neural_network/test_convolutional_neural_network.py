@@ -193,7 +193,7 @@ def test_convolutional_neural_network(show_plots=False):
 
     if show_plots:
         # Plot several test images and their associated predictions
-        _ = plot_fashion_images(data=test_dataset, device=device, model=model)
+        _ = plot_fashion_images(dataset=test_dataset, device=device, model=model)
         plt.show()
 
 
