@@ -140,6 +140,7 @@ The total number of parameters for this model is obtained by summing the paramet
 # Compute and print parameter count
 n_params = get_parameter_count(model)
 print(f"Model has {n_params} trainable parameters")
+
 # Linear layers have (in_features + 1) * out_features parameters.
 # Hidden layer has (2 + 1) * hidden_layer_dim parameters.
 # Output layer has (hidden_layer_dim + 1) * 1 parameters

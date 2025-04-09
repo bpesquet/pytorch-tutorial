@@ -197,6 +197,17 @@ print(model)
 
 ### Parameter count
 
+The total number of parameters for this model is obtained by summing the parameter counts for each of its layers:
+
+- [Linear](https://pytorch.org/docs/stable/generated/torch.nn.Linear.html) and [LazyLinear](https://pytorch.org/docs/stable/generated/torch.nn.LazyLinear.html) layers have `(in_features + 1) * out_features` parameters (the `+1` accounts for bias).
+- For [Conv2d](https://pytorch.org/docs/stable/generated/torch.nn.Conv2d.html) layers, each kernel has `in_channels * kernel_size * kernel_size + 1` parameters.
+- [MaxPool2d](https://pytorch.org/docs/stable/generated/torch.nn.MaxPool2d.html) and [Flatten](https://pytorch.org/docs/stable/generated/torch.nn.Flatten.html) layers have no parameters.
+
+> [!NOTE]
+> The `get_parameter_count()` utility function was defined in a [previous example](../linear_regression/README.md#parameter-count).
+
+---
+
 ```python
 # Compute and print parameter count
 n_params = get_parameter_count(model)
