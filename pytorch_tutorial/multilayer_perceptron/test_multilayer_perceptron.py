@@ -30,10 +30,10 @@ def test_multilayer_perceptron(show_plots=False):
 
     # Hyperparameters
     n_samples = 500  # Number of data samples
-    hidden_layer_dim = 3  # Number of neurons on the hidden layer of the MLP
     n_epochs = 50  # Number of training iterations on the whole dataset
     learning_rate = 0.1  # Rate of parameter change during gradient descent
     batch_size = 5  # Number of samples used for one gradient descent step
+    hidden_layer_dim = 3  # Number of neurons on the hidden layer of the MLP
 
     # Generate 2D data (a large circle containing a smaller circle)
     inputs, targets = make_circles(n_samples=n_samples, noise=0.1, factor=0.3)

@@ -70,7 +70,9 @@ def test_convolutional_neural_network(show_plots=False):
     batch_size = 64  # Number of samples used for one gradient descent step
     conv2d_kernel_size = 3  # Size of the 2D convolution kernels
 
-    # Download and construct the Fashion-MNIST images dataset
+    # Download and construct the Fashion-MNIST images dataset.
+    # ToTensor() converts a PIL Image or NumPy array (H x W x C) in the range [0, 255]
+    # to a PyTorch tensor of shape (C x H x W) in the range [0.0, 1.0].
     # The training set is used to train the model
     train_dataset = datasets.FashionMNIST(
         root=DATA_DIR,

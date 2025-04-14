@@ -54,7 +54,7 @@ conv2d_kernel_size = 3  # Size of the 2D convolution kernels
 
 We use [Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist), a classic dataset for image recognition. Each example is a 28x28 grayscale image,  associated with a label (fashion category) from 10 possible classes: t-shirt, trouser, pullover...
 
-This dataset is provided by PyTorch through the [FashionMNIST](https://pytorch.org/vision/0.19/generated/torchvision.datasets.FashionMNIST.html) class. In order to evaluate the trained model performance on unseen data, this class lets us download either the training set (60,000 images) or the test set (10,000 images).
+No need to download it manually: this dataset is provided by PyTorch through the [FashionMNIST](https://pytorch.org/vision/0.19/generated/torchvision.datasets.FashionMNIST.html) class, which lets us download either the training set (60,000 images) or the test set (10,000 images).
 
 Alongside download, a [transform](https://pytorch.org/vision/main/transforms.html) operation is applied to turn images into PyTorch tensors of shape `(color_depth, height, width)`, with pixel values scaled to the $[0,1]$ range.
 
@@ -64,7 +64,9 @@ Alongside download, a [transform](https://pytorch.org/vision/main/transforms.htm
 # Directory for downloaded files
 DATA_DIR = "./_output"
 
-# Download and construct the Fashion-MNIST images dataset
+# Download and construct the Fashion-MNIST images dataset.
+# ToTensor() converts a PIL Image or NumPy array (H x W x C) in the range [0, 255]
+# to a PyTorch tensor of shape (C x H x W) in the range [0.0, 1.0].
 # The training set is used to train the model
 train_dataset = datasets.FashionMNIST(
     root=DATA_DIR,
