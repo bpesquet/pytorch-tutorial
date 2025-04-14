@@ -376,7 +376,9 @@ def plot_fashion_images(dataset, device, model=None):
         img, label = dataset[sample_idx]
         figure.add_subplot(rows, cols, i)
         plt.axis("off")
-        plt.imshow(img.cpu().detach().numpy().squeeze(), cmap="gray")
+
+        # The color depth channel is removed to obtain a (H x W) tensor ready for plotting
+        plt.imshow(img.squeeze(), cmap="binary")
 
         # Title is either the true or predicted fashion item
         if model is None:
