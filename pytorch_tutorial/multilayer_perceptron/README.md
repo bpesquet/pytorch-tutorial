@@ -27,6 +27,7 @@ As usual, we start by importing the necessary packages.
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 import seaborn as sns
 from sklearn.datasets import make_circles
 import torch

@@ -26,6 +26,7 @@ As usual, we start by importing the necessary packages.
 ```python
 import math
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 import seaborn as sns
 from sklearn.datasets import make_blobs
 import torch
