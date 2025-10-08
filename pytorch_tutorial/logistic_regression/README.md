@@ -13,9 +13,11 @@ math: true  # Use default Marp engine for math rendering
 <!-- Show pagination, starting with second slide -->
 <!-- paginate: true -->
 
+> The Python source file is [available here](test_logistic_regression.py).
+
 ## Scope and objective
 
-This example trains a Logistic Regression classifier (equivalent to a feedforward neural network without any hidden layer) on a 2D dataset. The complete sourse code is [available here](test_logistic_regression.py).
+This example trains a Logistic Regression classifier (equivalent to a feedforward neural network without any hidden layer) on a 2D dataset.
 
 ![Training outcome](images/logistic_regression.png)
 

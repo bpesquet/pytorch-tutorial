@@ -13,6 +13,8 @@ math: true  # Use default Marp engine for math rendering
 <!-- Show pagination, starting with second slide -->
 <!-- paginate: true -->
 
+> The Python source file is [available here](test_fundamentals.py).
+
 ## PyTorch in a nutshell
 
 [PyTorch](https://pytorch.org/) can be described as the combination of:
@@ -28,7 +30,7 @@ This [example](test_fundamentals.py) focuses on its fundamentals aspects: tensor
 First and foremost, we need to import [torch](https://pytorch.org/docs/stable/torch.html), the core package of PyTorch.
 
 > [!NOTE]
-> Depending on your context, the library may already be available on your system and ready to be imported. For example, this is the case in most cloud-based notebook execution platforms like [Google Colaboratory](https://colab.research.google.com/). Refer to its [documentation](https://pytorch.org/get-started/locally/) if you need to install PyTorch on your local environment.
+> Depending on your environment, the library may already be available on your system and ready to be imported. For example, this is the case in most cloud-based notebook execution platforms like [Google Colaboratory](https://colab.research.google.com/). Refer to its [documentation](https://pytorch.org/get-started/locally/) if you need to install PyTorch on your local environment.
 
 ```python
 import torch
@@ -42,7 +44,7 @@ import torch
 This example also uses several additional libraries that you must import using the following code.
 
 > [!NOTE]
-> You might need to install the [scikit-learn](https://scikit-learn.org) and [torchvision](https://pytorch.org/vision/stable/index.html) packages beforehand.
+> Depending on your environment, you might need to install the [NumPy](https://numpy.org/), [scikit-learn](https://scikit-learn.org) and [torchvision](https://pytorch.org/vision/stable/index.html) packages beforehand.
 
 ```python
 import math

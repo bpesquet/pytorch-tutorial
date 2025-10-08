@@ -13,9 +13,11 @@ math: true  # Use default Marp engine for math rendering
 <!-- Show pagination, starting with second slide -->
 <!-- paginate: true -->
 
+> The Python source file is [available here](test_multilayer_perceptron.py).
+
 ## Scope and objective
 
-This example trains a MultiLayer Perceptron (a feedforward neural network with one hidden layer) to classify 2D data. It is designed to mimic the experience of the [TensorFlow Playground](https://playground.tensorflow.org/#activation=tanh&batchSize=5&dataset=circle&regDataset=reg-plane&learningRate=0.1&regularizationRate=0&noise=0&networkShape=3&seed=0.94779&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false)). The complete sourse code is [available here](test_multilayer_perceptron.py).
+This example trains a MultiLayer Perceptron (a feedforward neural network with one hidden layer) to classify 2D data. It is designed to mimic the experience of the [TensorFlow Playground](https://playground.tensorflow.org/#activation=tanh&batchSize=5&dataset=circle&regDataset=reg-plane&learningRate=0.1&regularizationRate=0&noise=0&networkShape=3&seed=0.94779&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false)).
 
 ![Training outcome](images/multilayer_perceptron.png)
 
@@ -223,7 +225,7 @@ for epoch in range(n_epochs):
 After training, we plot the data and decision boundary.
 
 > [!NOTE]
-> The `plot_decision_boundaries()` utility function was defined in a [previous example](../logistic_regression/README.md#results-plotting).
+> The `plot_decision_boundaries()` utility function is defined below.
 
 ```python
 # Improve plots appearance
@@ -237,4 +239,92 @@ _ = plot_decision_boundaries(
     device=device,
 )
 plt.show()
+```
+
+---
+
+```python
+def plot_decision_boundaries(model, x, y, title, device):
+    """
+    Plot the decision boundaries and data points for a PyTorch classifier.
+
+    Args:
+        model (torch.nn.Module): Trained PyTorch model
+        inputs (torch.Tensor): Input features of shape (n_samples, 2)
+        targets (torch.Tensor): Labels of shape (n_samples,)
+        title (str): Plot title
+        device (torch.device): device where data on model are stored
+    """
+    # Set the model to evaluation mode - important for batch normalization and dropout layers.
+    # Unnecessary here but added for best practices
+    model.eval()
+
+    # Convert inputs and targets to NumPy arrays
+    x_cpu = x.detach().cpu().numpy()
+    y_cpu = y.detach().cpu().numpy()
+
+    # Determine bounds for the grid
+    x_min, x_max = x_cpu[:, 0].min() - 1, x_cpu[:, 0].max() + 1
+    y_min, y_max = x_cpu[:, 1].min() - 1, x_cpu[:, 1].max() + 1
+
+    # Generate a grid of points with distance h between them
+    h = 0.02
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+
+    # Convert mesh to PyTorch tensors and put it on device memory
+    x_mesh = torch.tensor(np.c_[xx.ravel(), yy.ravel()], dtype=torch.float).to(device)
+
+    # Get predictions for mesh points
+    with torch.no_grad():
+        y_mesh = model(x_mesh).detach().cpu()
+        if y_mesh.shape[1] > 1:  # For multi-class problems
+            y_mesh = torch.argmax(y_mesh, dim=1)
+
+            # Reshape predictions to match mesh shape
+            y_mesh = y_mesh.numpy().reshape(xx.shape)
+
+            # Create the plot
+            plt.figure()
+
+            # Plot decision boundaries
+            plt.contourf(xx, yy, y_mesh, alpha=0.4, cmap="RdYlBu")
+            plt.contour(xx, yy, y_mesh, colors="k", linewidths=0.5)
+
+            # Plot data points
+            scatter = plt.scatter(
+                x_cpu[:, 0], x_cpu[:, 1], c=y_cpu, cmap="RdYlBu", linewidth=1, alpha=0.8
+            )
+        else:  # For binary classification
+            # Reshape predictions to match mesh shape
+            y_mesh = y_mesh.numpy().reshape(xx.shape)
+
+            # Create the plot
+            plt.figure()
+
+            # Plot decision boundary
+            plt.contourf(xx, yy, y_mesh, cmap=plt.colormaps.get_cmap("Spectral"))
+
+            # Plot data points
+            cm_bright = ListedColormap(["#FF0000", "#0000FF"])
+            scatter = plt.scatter(x_cpu[:, 0], x_cpu[:, 1], c=y_cpu, cmap=cm_bright)
+
+    # Add legend
+    unique_labels = np.unique(y_cpu)
+    legend_elements = [
+        plt.Line2D(
+            [0],
+            [0],
+            marker="o",
+            color="w",
+            markerfacecolor=scatter.cmap(scatter.norm(label.item())),
+            markersize=10,
+            label=f"Class {label.item():.0f}",
+        )
+        for label in unique_labels
+    ]
+    plt.legend(handles=legend_elements)
+
+    plt.title(title)
+
+    return plt.gcf()
 ```

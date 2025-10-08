@@ -13,9 +13,11 @@ math: true  # Use default Marp engine for math rendering
 <!-- Show pagination, starting with second slide -->
 <!-- paginate: true -->
 
+> The Python source file is [available here](test_convolutional_neural_network.py).
+
 ## Scope and objective
 
-This example trains a convolutional neural network to classify fashion items. The complete sourse code is [available here](test_convolutional_neural_network.py).
+This example trains a convolutional neural network to classify fashion items.
 
 ![Training outcome](images/convolutional_neural_network.png)
 
@@ -33,6 +35,7 @@ from torchvision import datasets, transforms
 ## GPU support
 
 ```python
+# Access GPU device if available, or fail back to CPU
 device = torch.device(
     "cuda"
     if torch.cuda.is_available()

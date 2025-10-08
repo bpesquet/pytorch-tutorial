@@ -13,9 +13,11 @@ math: true  # Use default Marp engine for math rendering
 <!-- Show pagination, starting with second slide -->
 <!-- paginate: true -->
 
+> The Python source file is [available here](test_linear_regression.py).
+
 ## Scope and objective
 
-This example trains a Linear Regression model on a minimalist 2D dataset. The complete sourse code is [available here](test_linear_regression.py).
+This example trains a Linear Regression model on a minimalist 2D dataset.
 
 ![Training outcome](images/linear_regression.png)
 
