@@ -15,7 +15,7 @@ from pytorch_tutorial.utils import (
 )
 
 # Directory for downloaded files
-DATA_DIR = "./_output"
+DATA_DIR = "./.output"
 
 
 class Convnet(nn.Module):

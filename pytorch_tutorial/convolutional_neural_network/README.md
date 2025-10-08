@@ -62,7 +62,7 @@ Alongside download, a [transform](https://pytorch.org/vision/main/transforms.htm
 
 ```python
 # Directory for downloaded files
-DATA_DIR = "./_output"
+DATA_DIR = "./.output"
 
 # Download and construct the Fashion-MNIST images dataset.
 # ToTensor() converts a PIL Image or NumPy array (H x W x C) in the range [0, 255]

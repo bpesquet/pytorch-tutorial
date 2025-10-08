@@ -11,7 +11,7 @@ from torchvision import datasets, transforms, models
 from pytorch_tutorial.utils import get_device
 
 # Directory for downloaded files and saved model weights
-DATA_DIR = MODEL_DIR = "./_output"
+DATA_DIR = MODEL_DIR = "./.output"
 
 
 def test_tensor_manipulation():

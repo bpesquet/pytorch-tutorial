@@ -349,7 +349,7 @@ The following code downloads the famous MNIST handwritten digits dataset, then t
 
 ```python
 # Directory for downloaded files
-DATA_DIR = "./_output"
+DATA_DIR = "./.output"
 
 # Download and construct the MNIST handwritten digits training dataset
 mnist = datasets.MNIST(
@@ -477,7 +477,7 @@ Models store their learned parameters in an internal state dictionary called `st
 
 ```python
 # Directory for saved model weights
-MODEL_DIR = "./_output"
+MODEL_DIR = "./.output"
 
 # Download and load the pretrained model ResNet-18
 resnet = models.resnet18(weights="ResNet18_Weights.DEFAULT")
