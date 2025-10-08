@@ -1,9 +1,8 @@
 # (Yet another) PyTorch Tutorial
 
-![Dynamic TOML Badge: Python](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fbpesquet%2Fpytorch-tutorial%2Frefs%2Fheads%2Fmain%2Fpyproject.toml&query=%24.tool.poetry.dependencies.python&logo=python&logoColor=white&logoSize=auto&label=Python&labelColor=%233776AB&color=black)
-![Dynamic TOML Badge: PyTorch](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fbpesquet%2Fpytorch-tutorial%2Frefs%2Fheads%2Fmain%2Fpyproject.toml&query=%24.tool.poetry.dependencies.torch&logo=pytorch&logoColor=white&logoSize=auto&label=PyTorch&labelColor=%23EE4C2C&color=black)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/bpesquet/pytorch-tutorial/ci.yaml)
+[![Dynamic TOML Badge: Python](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fbpesquet%2Fpytorch-tutorial%2Frefs%2Fheads%2Fmain%2Fpyproject.toml&query=%24.project.requires-python&logo=python&logoColor=white&logoSize=auto&label=Python&labelColor=black&color=blue)](pyproject.toml)
+[![Dynamic TOML Badge: PyTorch](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fbpesquet%2Fpytorch-tutorial%2Frefs%2Fheads%2Fmain%2Fpyproject.toml&query=%24.tool.poetry.dependencies.torch&logo=pytorch&logoColor=white&logoSize=auto&label=PyTorch&labelColor=black&color=red)](https://pytorch.org)
+[![CI](https://github.com/bpesquet/pytorch-tutorial/workflows/CI/badge.svg)](https://github.com/bpesquet/pytorch-tutorial/blob/main/.github/workflows/ci.yaml)
 
 This repository provides concise and annotated examples for learning the basics of [PyTorch](https://pytorch.org).
 
@@ -20,11 +19,13 @@ This repository provides concise and annotated examples for learning the basics 
 
 ## Usage
 
+> [uv](https://docs.astral.sh/uv/) needs to be available on your system.
+
 ```bash
 git clone https://github.com/bpesquet/pytorch-tutorial.git
 cd pytorch-tutorial
-poetry install
-python {path to Python example file}
+uv sync
+uv run python {path to example file}
 ```
 
 ## Development notes
@@ -33,25 +34,22 @@ python {path to Python example file}
 
 This project is built with the following software:
 
-- [Poetry](https://python-poetry.org/) for dependency management;
-- [Black](https://github.com/psf/black) for code formatting;
-- [Pylint](https://github.com/pylint-dev/pylint) to detect mistakes in the codebase;
-- [pytest](https://docs.pytest.org) for testing examples;
-- a [GitHub Action](.github/workflows/ci.yaml) for validating the code upon each push;
-- [Marp](https://marp.app/) for showcasing `README` files as slideshows during lectures or labs.
+- [uv](https://docs.astral.sh/uv/) for project management;
+- [ruff](https://docs.astral.sh/ruff/) for code formatting and linting;
+- [pytest](https://docs.pytest.org) for testing.
 
 ### Useful commands
 
 ```bash
-# Reformat all Python files
-black .
+# Format all Python files
+uvx ruff format
 
-# Check the codebase for mistakes
-pylint pytorch_tutorial/*
+# Lint all Python files and fix any fixable errors
+uvx ruff check --fix
 
-# Run all code examples as unit tests
-# The optional -s flag prints code output
-pytest [-s]
+# Run all code examples as unit tests.
+# The optional -s flag prints code output.
+uv run pytest [-s]
 ```
 
 ## License
