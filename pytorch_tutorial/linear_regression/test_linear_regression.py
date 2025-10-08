@@ -7,11 +7,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import torch
 from torch import nn
-from pytorch_tutorial.utils import (
-    get_device,
-    get_parameter_count,
-    plot_2d_data,
-)
 
 
 def test_linear_regression(show_plots=False):
@@ -22,7 +17,14 @@ def test_linear_regression(show_plots=False):
         show_plots (bool): Flag for plotting the training outcome
     """
 
-    device = get_device()
+    # Access GPU device if available, or fail back to CPU
+    device = torch.device(
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps"
+        if torch.backends.mps.is_available()
+        else "cpu"
+    )
     print(f"PyTorch {torch.__version__}, using {device} device")
 
     # Hyperparameters
@@ -84,7 +86,7 @@ def test_linear_regression(show_plots=False):
     print(model)
 
     # Compute and print parameter count
-    n_params = get_parameter_count(model)
+    n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"Model has {n_params} trainable parameters")
     # Linear layers have (in_features + 1) * out_features parameters
     assert n_params == 2
@@ -131,6 +133,36 @@ def test_linear_regression(show_plots=False):
             x=x_train, y=y_train, model=model, title="Linear Regression with PyTorch"
         )
         plt.show()
+
+
+def plot_2d_data(x, y, model, title):
+    """
+    Plot 2D data and model predictions.
+
+    Args:
+        model (torch.nn.Module): Trained PyTorch model
+        x (torch.Tensor): Input features of shape (n_samples, 2)
+        y (torch.Tensor): Labels of shape (n_samples,)
+        title (str): Plot title
+    """
+    # Set the model to evaluation mode - important for batch normalization and dropout layers.
+    # Unnecessary here but added for best practices
+    model.eval()
+
+    # Compute model results on training data, and convert them to a NumPy array
+    y_pred = model(x).detach().cpu().numpy()
+
+    # Convert inputs and targets to NumPy arrays
+    x_cpu = x.detach().cpu().numpy()
+    y_cpu = y.detach().cpu().numpy()
+
+    # Plot the training results
+    plt.plot(x_cpu, y_cpu, "ro", label="Original data")
+    plt.plot(x_cpu, y_pred, label="Fitted line")
+    plt.legend()
+    plt.title(title)
+
+    return plt.gcf()
 
 
 # Standalone execution

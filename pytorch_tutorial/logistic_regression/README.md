@@ -15,7 +15,7 @@ math: true  # Use default Marp engine for math rendering
 
 ## Scope and objective
 
-This example trains a Logistic Regression classifier (equivalent to a feedforward neural network without any hidden layer) on a 2D dataset. The complete sourse code is available [here](test_logistic_regression.py).
+This example trains a Logistic Regression classifier (equivalent to a feedforward neural network without any hidden layer) on a 2D dataset. The complete sourse code is [available here](test_logistic_regression.py).
 
 ![Training outcome](images/logistic_regression.png)
 
@@ -36,11 +36,15 @@ from torch.utils.data import DataLoader
 
 ## GPU support
 
-> [!NOTE]
-> The `get_device()` utility function was defined in a [previous example](../fundamentals/README.md#gpu-support)
-
 ```python
-device = get_device()
+# Access GPU device if available, or fail back to CPU
+device = torch.device(
+    "cuda"
+    if torch.cuda.is_available()
+    else "mps"
+    if torch.backends.mps.is_available()
+    else "cpu"
+)
 print(f"PyTorch {torch.__version__}, using {device} device")
 ```
 
@@ -120,12 +124,9 @@ print(model)
 
 The number of parameters for this model is equal to the number of entries multiplied by the number of classes. We must take into account the biases (additional entries always equal to 1).
 
-> [!NOTE]
-> The `get_parameter_count()` utility function was defined in a [previous example](../linear_regression/README.md#parameter-count).
-
 ```python
 # Compute and print parameter count
-n_params = get_parameter_count(model)
+n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print(f"Model has {n_params} trainable parameters")
 # Linear layers have (in_features + 1) * out_features parameters
 assert n_params == 3 * output_dim

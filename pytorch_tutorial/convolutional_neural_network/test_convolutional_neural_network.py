@@ -8,11 +8,6 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
-from pytorch_tutorial.utils import (
-    get_device,
-    get_parameter_count,
-    plot_fashion_images,
-)
 
 # Directory for downloaded files
 DATA_DIR = "./.output"
@@ -61,7 +56,14 @@ def test_convolutional_neural_network(show_plots=False):
     Main test function
     """
 
-    device = get_device()
+    # Access GPU device if available, or fail back to CPU
+    device = torch.device(
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps"
+        if torch.backends.mps.is_available()
+        else "cpu"
+    )
     print(f"PyTorch {torch.__version__}, using {device} device")
 
     # Hyperparameters
@@ -121,7 +123,7 @@ def test_convolutional_neural_network(show_plots=False):
     print(model)
 
     # Compute and print parameter count
-    n_params = get_parameter_count(model)
+    n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"Model has {n_params} trainable parameters")
     # Check parameter count in a dedicated function to keep main code simple
     check_parameter_count(n_params=n_params, conv2d_kernel_size=conv2d_kernel_size)
@@ -228,6 +230,52 @@ def check_parameter_count(n_params, conv2d_kernel_size):
         n_params
         == n_params_cond2d1 + n_params_cond2d2 + n_params_linear1 + n_params_linear2
     )
+
+
+def plot_fashion_images(dataset, device, model=None):
+    """
+    Plot some images with their associated or predicted labels
+    """
+
+    # Items, i.e. fashion categories associated to images and indexed by label
+    fashion_items = (
+        "T-Shirt",
+        "Trouser",
+        "Pullover",
+        "Dress",
+        "Coat",
+        "Sandal",
+        "Shirt",
+        "Sneaker",
+        "Bag",
+        "Ankle Boot",
+    )
+
+    figure = plt.figure()
+
+    cols, rows = 5, 3
+    for i in range(1, cols * rows + 1):
+        sample_idx = torch.randint(len(dataset), size=(1,)).item()
+        img, label = dataset[sample_idx]
+        figure.add_subplot(rows, cols, i)
+        plt.axis("off")
+
+        # The color depth channel is removed to obtain a (H x W) tensor ready for plotting
+        plt.imshow(img.squeeze(), cmap="binary")
+
+        # Title is either the true or predicted fashion item
+        if model is None:
+            title = fashion_items[label]
+        else:
+            # Add a dimension (to match expected shape with batch size) and store image on device memory
+            x_img = img[None, :].to(device)
+            # Compute predicted label for image
+            # Even if the model outputs unormalized logits, argmax gives us the predicted label
+            pred_label = model(x_img).argmax(dim=1).item()
+            title = f"{fashion_items[pred_label]}?"
+        plt.title(title)
+
+    return plt.gcf()
 
 
 # Standalone execution

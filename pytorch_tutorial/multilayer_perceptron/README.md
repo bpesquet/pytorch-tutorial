@@ -15,7 +15,7 @@ math: true  # Use default Marp engine for math rendering
 
 ## Scope and objective
 
-This example trains a MultiLayer Perceptron (a feedforward neural network with one hidden layer) to classify 2D data. It is designed to mimic the experience of the [TensorFlow Playground](https://playground.tensorflow.org/#activation=tanh&batchSize=5&dataset=circle&regDataset=reg-plane&learningRate=0.1&regularizationRate=0&noise=0&networkShape=3&seed=0.94779&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false)). The complete sourse code is available [here](test_multilayer_perceptron.py).
+This example trains a MultiLayer Perceptron (a feedforward neural network with one hidden layer) to classify 2D data. It is designed to mimic the experience of the [TensorFlow Playground](https://playground.tensorflow.org/#activation=tanh&batchSize=5&dataset=circle&regDataset=reg-plane&learningRate=0.1&regularizationRate=0&noise=0&networkShape=3&seed=0.94779&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false)). The complete sourse code is [available here](test_multilayer_perceptron.py).
 
 ![Training outcome](images/multilayer_perceptron.png)
 
@@ -37,11 +37,15 @@ from torch.utils.data import DataLoader
 
 ## GPU support
 
-> [!NOTE]
-> The `get_device()` utility function was defined in a [previous example](../fundamentals/README.md#gpu-support)
-
 ```python
-device = get_device()
+# Access GPU device if available, or fail back to CPU
+device = torch.device(
+    "cuda"
+    if torch.cuda.is_available()
+    else "mps"
+    if torch.backends.mps.is_available()
+    else "cpu"
+)
 print(f"PyTorch {torch.__version__}, using {device} device")
 ```
 
@@ -134,12 +138,9 @@ print(model)
 
 The total number of parameters for this model is obtained by summing the parameter counts for the hidden and output layers.
 
-> [!NOTE]
-> The `get_parameter_count()` utility function was defined in a [previous example](../linear_regression/README.md#parameter-count).
-
 ```python
 # Compute and print parameter count
-n_params = get_parameter_count(model)
+n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print(f"Model has {n_params} trainable parameters")
 
 # Linear layers have (in_features + 1) * out_features parameters.

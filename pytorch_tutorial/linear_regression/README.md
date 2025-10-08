@@ -15,7 +15,7 @@ math: true  # Use default Marp engine for math rendering
 
 ## Scope and objective
 
-This example trains a Linear Regression model on a minimalist 2D dataset. The complete sourse code is available [here](test_linear_regression.py).
+This example trains a Linear Regression model on a minimalist 2D dataset. The complete sourse code is [available here](test_linear_regression.py).
 
 ![Training outcome](images/linear_regression.png)
 
@@ -35,11 +35,15 @@ from torch import nn
 
 Let's probe for the availability of an accelerated device.
 
-> [!NOTE]
-> The `get_device()` utility function was defined in a [previous example](../fundamentals/README.md#gpu-support).
-
 ```python
-device = get_device()
+# Access GPU device if available, or fail back to CPU
+device = torch.device(
+    "cuda"
+    if torch.cuda.is_available()
+    else "mps"
+    if torch.backends.mps.is_available()
+    else "cpu"
+)
 print(f"PyTorch {torch.__version__}, using {device} device")
 ```
 
@@ -104,20 +108,12 @@ model = nn.Linear(in_features=1, out_features=1).to(device)
 
 The model defines a function $f(x) = w_0 + w_1 x$. It has two parameters: $w_0$ and $w_1$.
 
-We define a function to count model parameters that will be reused in other examples.
-
 ```python
-def get_parameter_count(model):
-    """Return the number of trainable parameters for a PyTorch model"""
-
-    return sum(p.numel() for p in model.parameters() if p.requires_grad)
-
-
 # Print model architecture
 print(model)
 
 # Compute and print parameter count
-n_params = get_parameter_count(model)
+n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print(f"Model has {n_params} trainable parameters")
 # Linear layers have (in_features + 1) * out_features parameters
 assert n_params == 2
@@ -190,7 +186,7 @@ for epoch in range(n_epochs):
 Finally, model predictions (fitted line) are plotted alongside training data.
 
 > [!NOTE]
-> The `plot_training_result()` utility function is defined below.
+> The `plot_2d_data()` utility function is defined below.
 
 ```python
 # Improve plots appearance

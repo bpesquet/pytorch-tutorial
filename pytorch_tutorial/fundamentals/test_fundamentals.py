@@ -8,7 +8,6 @@ from sklearn.datasets import make_circles
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import datasets, transforms, models
-from pytorch_tutorial.utils import get_device
 
 # Directory for downloaded files and saved model weights
 DATA_DIR = MODEL_DIR = "./.output"
@@ -89,7 +88,14 @@ def test_tensor_manipulation():
 def test_gpu_support():
     """Test GPU support"""
 
-    device = get_device()
+    # Access GPU device if available, or fail back to CPU
+    device = torch.device(
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps"
+        if torch.backends.mps.is_available()
+        else "cpu"
+    )
     print(f"PyTorch {torch.__version__}, using {device} device")
 
     # Create a 1D tensor (filled with the scalar value 1) on the memory of the initialized device
@@ -256,7 +262,14 @@ def test_dataset_loading():
 def test_model_loading_and_saving():
     """Test model loading and saving"""
 
-    device = get_device()
+    # Access GPU device if available, or fail back to CPU
+    device = torch.device(
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps"
+        if torch.backends.mps.is_available()
+        else "cpu"
+    )
 
     # Download and load the pretrained model ResNet-18
     resnet = models.resnet18(weights="ResNet18_Weights.DEFAULT")

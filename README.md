@@ -1,9 +1,6 @@
 # (Yet another) PyTorch Tutorial
 
-[![Dynamic TOML Badge: Python](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fbpesquet%2Fpytorch-tutorial%2Frefs%2Fheads%2Fmain%2Fpyproject.toml&query=%24.project.requires-python&logo=python&logoColor=white&logoSize=auto&label=Python&labelColor=black&color=blue)](pyproject.toml)
-[![CI](https://github.com/bpesquet/pytorch-tutorial/workflows/CI/badge.svg)](https://github.com/bpesquet/pytorch-tutorial/blob/main/.github/workflows/ci.yaml)
-
-This repository provides concise and annotated examples for learning the basics of [PyTorch](https://pytorch.org).
+This repository provides annotated single-file examples for learning [PyTorch](https://pytorch.org).
 
 > [About this project](ABOUT.md)
 

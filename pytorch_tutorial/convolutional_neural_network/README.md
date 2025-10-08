@@ -15,7 +15,7 @@ math: true  # Use default Marp engine for math rendering
 
 ## Scope and objective
 
-This example trains a convolutional neural network to classify fashion items. The complete sourse code is available [here](test_convolutional_neural_network.py).
+This example trains a convolutional neural network to classify fashion items. The complete sourse code is [available here](test_convolutional_neural_network.py).
 
 ![Training outcome](images/convolutional_neural_network.png)
 
@@ -32,11 +32,14 @@ from torchvision import datasets, transforms
 
 ## GPU support
 
-> [!NOTE]
-> The `get_device()` utility function was defined in a [previous example](../fundamentals/README.md#gpu-support)
-
 ```python
-device = get_device()
+device = torch.device(
+    "cuda"
+    if torch.cuda.is_available()
+    else "mps"
+    if torch.backends.mps.is_available()
+    else "cpu"
+)
 print(f"PyTorch {torch.__version__}, using {device} device")
 ```
 
@@ -205,14 +208,11 @@ The total number of parameters for this model is obtained by summing the paramet
 - For [Conv2d](https://pytorch.org/docs/stable/generated/torch.nn.Conv2d.html) layers, each kernel has `in_channels * kernel_size * kernel_size + 1` parameters.
 - [MaxPool2d](https://pytorch.org/docs/stable/generated/torch.nn.MaxPool2d.html) and [Flatten](https://pytorch.org/docs/stable/generated/torch.nn.Flatten.html) layers have no parameters.
 
-> [!NOTE]
-> The `get_parameter_count()` utility function was defined in a [previous example](../linear_regression/README.md#parameter-count).
-
 ---
 
 ```python
 # Compute and print parameter count
-n_params = get_parameter_count(model)
+n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print(f"Model has {n_params} trainable parameters")
 
 # Conv2d layers have (in_channels * kernel_size * kernel_size + 1) * out_channels parameters
