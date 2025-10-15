@@ -27,6 +27,7 @@ As usual, we start by importing the necessary packages.
 
 ```python
 import math
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import seaborn as sns
