@@ -194,7 +194,7 @@ assert np.array_equal(n, np.array([2] * n_values))
 
 One of the distinctive features of PyTorch is the support of various hardware accelerators, notably GPUs. This can lead to significant gains when running computationaly intensive operations, such as model training.
 
-PyTorch offers out-of-the-box support for [CUDA](https://developer.nvidia.com/cuda-toolkit) (NVIDIA) and [MPS](https://developer.apple.com/documentation/metalperformanceshaders) (Applce Silicon). The following code tests the availability of one of such devices.
+PyTorch offers out-of-the-box support for [CUDA](https://developer.nvidia.com/cuda-toolkit) (NVIDIA) and [MPS](https://developer.apple.com/documentation/metalperformanceshaders) (Apple Silicon). The following code tests the availability of one of such devices.
 
 ### Initializing a device
 
